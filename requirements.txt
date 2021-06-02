@@ -1,0 +1,4 @@
+telethon
+pytz
+mega.py
+requests
