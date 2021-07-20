@@ -1,0 +1,4 @@
+telethon
+cryptg
+mega.py
+requests
