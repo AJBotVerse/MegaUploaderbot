@@ -1,4 +1,6 @@
 telethon
-cryptg
 mega.py
+mysql.connector
 requests
+cryptg
+pytube
