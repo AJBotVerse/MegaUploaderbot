@@ -1,0 +1,5 @@
+#Session File
+AJTime.session
+
+#Cache File
+__pycache__/

@@ -1,0 +1,6 @@
+telethon
+mega.py
+mysql.connector
+requests
+cryptg
+pytube
