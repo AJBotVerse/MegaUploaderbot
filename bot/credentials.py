@@ -1,16 +1,14 @@
 '''Credentials'''
 
 
-api_id = ''     #API ID
+api_id = '' #Your API ID
 
-api_hash = ''       #API Hash
+api_hash = ''   #Your API Hash
 
-bot_token = ''      #Bot Token
+bot_token = ''  #Your Bot Token
 
-host = ''       #Host Name of Mysql
+mongo_connection_string = ''    #Your MongoDB Connection String
 
-user = ''       #Username of Mysql
+database_name = ''  #Your MongoDB Database`s Name
 
-password = ''       #Password of Mysql
-
-database = ''       #Database of Mysql
+collection_name = ''    #Your MongoDB Collection`s Name

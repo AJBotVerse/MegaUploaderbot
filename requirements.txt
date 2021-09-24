@@ -1,6 +1,7 @@
 telethon
 mega.py
-mysql.connector
+dnspython
+pymongo
 requests
 cryptg
 pytube

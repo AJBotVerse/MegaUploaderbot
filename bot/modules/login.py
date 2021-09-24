@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-
 '''It will handle All Login Requests'''
 
 
 '''Some Modules & Library'''
 from mega import *
 from mega.errors import RequestError
-from bot.funcs import line_number
+from bot.modules.funcs import line_number
 
 
 '''Login Class'''
