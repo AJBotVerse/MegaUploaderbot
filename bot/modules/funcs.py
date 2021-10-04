@@ -2,11 +2,13 @@
 
 
 '''Impoting Modules & Credentials'''
+from pymongo import MongoClient
 from requests import head
+from bot.credentials import *
 from inspect import currentframe
 from os import path
-from bot.credentials import mongo_connection_string, database_name, collection_name
-from pymongo import MongoClient
+import __main__
+
 
 '''Connecting To Database'''
 mongo_client = MongoClient(mongo_connection_string)
@@ -15,7 +17,6 @@ collection_login = db_login_detail[collection_name]
 
 
 '''Defining Some Functions'''
-
 #Adding Login Details To Database
 def adding_login_detail_to_database(userid, email, password):
     collection_login.insert_one({
@@ -47,6 +48,20 @@ async def length_of_file(url):
         print(e)
         return 'Not Valid'
 
+#Task Updating or Status Checking
+def task(status=None):
+    if status:
+        with open('task.txt', 'w') as newfile:
+            newfile.writelines([status])
+    else:
+        try:
+            with open('task.txt') as file:
+                return file.readlines()[0]
+        except FileNotFoundError:
+            return "No Task"
+
+#Function to find error in which file and in which line
 def line_number():
     cf = currentframe()
-    return f'In File {path.basename(__file__)} at line {cf.f_back.f_lineno}'
+    return f'In File {path.basename(__main__.__file__)} at line {cf.f_back.f_lineno}'
+

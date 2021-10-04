@@ -6,7 +6,7 @@
 
 '''Importing Modules and Libraries'''
 from os import remove
-from bot.modules.funcs import line_number
+from bot.modules.funcs import line_number, task
 from bot.perma_var import successful_uploaded, uploading_unsuccessful
 
 
@@ -42,6 +42,7 @@ class Upload:
             remove(self.filename)
             await bot.delete_messages(None, msg)
             await bot.send_message(userid, successful_uploaded, parse_mode = 'html')
+        task("No Task")
         return None
     
     

@@ -1,14 +1,21 @@
+#!/usr/bin/env python3
+
+
+"""Importing environ from os Library"""
+from os import environ
+
+
 '''Credentials'''
 
 
-api_id = '' #Your API ID
+api_id = environ["API_ID"] #Your API ID
 
-api_hash = ''   #Your API Hash
+api_hash = environ["API_HASH"]   #Your API Hash
 
-bot_token = ''  #Your Bot Token
+bot_token = environ["BOT_TOKEN"]  #Your Bot Token
 
-mongo_connection_string = ''    #Your MongoDB Connection String
+mongo_connection_string = environ["MONGO_CON_STRING"]    #Your MongoDB Connection String
 
-database_name = ''  #Your MongoDB Database`s Name
+database_name = environ["DATABASE_NAME"]  #Your MongoDB Database`s Name
 
-collection_name = ''    #Your MongoDB Collection`s Name
+collection_name = environ["COLLECTION_NAME"]    #Your MongoDB Collection`s Name

@@ -4,3 +4,6 @@ MegaUploader.session
 #Cache File
 __pycache__/
 /modules/__pycache__/
+
+#Test files
+test/

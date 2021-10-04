@@ -1,11 +1,13 @@
-'''Some permanent Variables defined'''
+#!/usr/bin/env python3
 
+
+'''Some permanent Variables defined'''
 
 common_text = "\n\n<u>If you are facing any problem, so report at @AJPyroVerseGroup</u>"
 
 to_login = "<i>If you are not logged in then, send login detail in this format email,password.</i>\n"
 
-start_msg = f"<b>Hi, I am MegaUploaderBot Created by @AJPyroVerse and My Developer is @AJTimePyro.</b>\n\nI support:-\n<i>1.</i> <u>Direct Downloading Link</u>\n<i>2.</i> <u>Telegram File</u>\n<i>3.</i> <u>Youtube URL</u>\n\n\n{to_login}\nWe will store your login detail on our database.{common_text}"
+start_msg = f"<b>Hi, This is Clone of @MegaDriveUploaderBot and originally Created by @AJPyroVerse and Original Developer is @AJTimePyro.</b>\n\nThis bot support:-\n<i>1.</i> <u>Direct Downloading Link</u>\n<i>2.</i> <u>Telegram File</u>\n<i>3.</i> <u>Youtube URL</u>\n\n\n{to_login}\nWe will store your login detail on our database.{common_text}"
 
 help_msg = f"{to_login}\nAfter login send Direct Downloading Link, Youtube URL or any Telegram File.\n\nTo remove your account from Database use /revoke.{common_text}"
 
@@ -36,8 +38,6 @@ uploading_msg = '<b>File successfully downloaded to server, Now uploading to Dri
 successful_uploaded = "<b>Your file is successfully uploaded.</b>"
 
 uploading_unsuccessful = f'Uploading went <b>unsuccessful</b>, Something Went Wrong{common_text}'
-
-broadcast_failed = '<b>Broadcasting Message can`t be empty</b>'
 
 choose_quality = '<i>Choose Which Video Quality you want to Upload</i>'
 
