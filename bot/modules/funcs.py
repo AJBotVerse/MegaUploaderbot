@@ -12,8 +12,8 @@ import __main__
 
 '''Connecting To Database'''
 mongo_client = MongoClient(mongo_connection_string)
-db_login_detail = mongo_client[database_name]
-collection_login = db_login_detail[collection_name]
+db_login_detail = mongo_client['megadb']
+collection_login = db_login_detail['mega_collection']
 
 
 '''Defining Some Functions'''

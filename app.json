@@ -1,0 +1,44 @@
+{
+    "name" : "MegaUploaderBot",
+    "description" : "This is MegaUploaderBot and it support Direct Downloading Link, Telegram File and Youtube URL, and upload them to Mega.nz Drive. ",
+    "keywords" : [
+        "telegram",
+        "bot",
+        "heroku",
+        "python",
+        "telethon",
+        "app.json",
+        "app",
+        "mega",
+        "mega.nz",
+        "uploader"
+    ],
+    "repository" : "https://github.com/AJTimePyro/MegaUploaderbot",
+    "success_url" : "https://t.me/MegaDriveUploaderBot",
+    "env" : {
+        "BOT_TOKEN" : {
+            "description" : "Get From https://t.me/BotFather"
+        },
+        "API_ID" : {
+            "description" : "Get From https://my.telegram.org"
+        },
+        "API_HASH" : {
+            "description" : "Get From https://my.telegram.org"
+        },
+        "MONGO_CON_STRING" : {
+            "description" : "Get From MongoDB Atlas."
+        }
+    },
+    "stack" : "heroku-20",
+    "buildpacks" : [
+        {
+            "url" : "heroku/python"
+        }
+    ],
+    "formation" : {
+        "worker" : {
+            "quantity" : 1,
+            "size" : "free"
+        }
+    }
+}

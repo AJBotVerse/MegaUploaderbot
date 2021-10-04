@@ -15,7 +15,3 @@ api_hash = environ["API_HASH"]   #Your API Hash
 bot_token = environ["BOT_TOKEN"]  #Your Bot Token
 
 mongo_connection_string = environ["MONGO_CON_STRING"]    #Your MongoDB Connection String
-
-database_name = environ["DATABASE_NAME"]  #Your MongoDB Database`s Name
-
-collection_name = environ["COLLECTION_NAME"]    #Your MongoDB Collection`s Name
