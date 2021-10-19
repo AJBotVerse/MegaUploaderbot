@@ -12,5 +12,5 @@ api_id = environ["API_ID"]
 
 api_hash = environ["API_HASH"]
 
-connection_string = environ["MONGO_STR"]
+connection_string = environ["MONGO_CON_STRING"]
 
