@@ -7,3 +7,6 @@ __pycache__/
 
 #Test files
 test/
+
+#Status File
+task.txt

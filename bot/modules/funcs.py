@@ -1,22 +1,49 @@
 #!/usr/bin/env python3
 
 
-'''Impoting Modules & Credentials'''
+"""Importing"""
+# Importing External Packages
+from telethon import Button
+from telethon.errors import rpcerrorlist
+from telethon.tl.functions.channels import GetParticipantRequest
 from pymongo import MongoClient
 from requests import head
-from bot.credentials import *
+
+# Importing Inbuilt packages
 from inspect import currentframe
 from os import path
-import __main__
+from __main__ import __file__
+
+# Importing Credentials & Developer defined modules
+from bot.perma_var import not_joined_community
+from bot.credentials import connection_string
 
 
 '''Connecting To Database'''
-mongo_client = MongoClient(mongo_connection_string)
-db_login_detail = mongo_client['megadb']
-collection_login = db_login_detail['mega_collection']
+mongo_client = MongoClient(connection_string)
+db_login_detail = mongo_client['MegaUploader']
+collection_login = db_login_detail['login_details']
 
 
 '''Defining Some Functions'''
+#Function to find error in which file and in which line
+def line_number():
+    cf = currentframe()
+    return f'In File {path.basename(__file__)} at line {cf.f_back.f_lineno}'
+
+#Checking User whether he joined channel and group or not joined.
+async def search_user_in_community(event, bot):
+    try:
+        await bot(GetParticipantRequest("@AJPyroVerse", event.sender_id))
+        await bot(GetParticipantRequest("@AJPyroVerseGroup", event.sender_id))
+    except rpcerrorlist.UserNotParticipantError:
+        await event.respond(not_joined_community, parse_mode = 'html', buttons = [Button.url('Join our Channel.','https://t.me/AJPyroVerse'), Button.url('Join our Group.','https://t.me/AJPyroVerseGroup')])
+        return
+    except Exception as e:
+        print(line_number(), e)
+    else:
+        return True
+
 #Adding Login Details To Database
 def adding_login_detail_to_database(userid, email, password):
     collection_login.insert_one({
@@ -45,7 +72,7 @@ async def length_of_file(url):
         else:   #File`s Size is in the Limit
             return 'Valid'
     except Exception as e:  #File is not Exist in Given URL
-        print(e)
+        print(line_number(), e)
         return 'Not Valid'
 
 #Task Updating or Status Checking
@@ -59,9 +86,3 @@ def task(status=None):
                 return file.readlines()[0]
         except FileNotFoundError:
             return "No Task"
-
-#Function to find error in which file and in which line
-def line_number():
-    cf = currentframe()
-    return f'In File {path.basename(__main__.__file__)} at line {cf.f_back.f_lineno}'
-

@@ -1,17 +1,23 @@
 #!/usr/bin/env python3
 
 
-'''Impoting Libraries, Modules & Credentials'''
+"""Importing"""
+# Importing External Packages
 from telethon import Button, events
-import cryptg   #For Increasing Bot Downloading Speed
 from pytube import YouTube
+
+# Importing Inbuilt packages
 from os import listdir, remove, linesep
 from subprocess import Popen, PIPE
 from re import match
+
+# Importing Credentials & Developer defined modules
 from bot.modules.funcs import *
 from bot.modules.upload import *
 from bot.perma_var import *
 
+
+"""Downloader Class"""
 class Downloader:
 
     def __init__(self, event, message_info, bot):
@@ -22,20 +28,16 @@ class Downloader:
     @classmethod
     async def start(cls, event, message_info, bot, log_object):
         self = cls(event, message_info, bot)
-        if message_info.entities:
-            if str(type(message_info.entities[0])) == "<class 'telethon.tl.types.MessageEntityUrl'>":   #For Url
-                url = message_info.text
-                process_msg = await event.respond(processing_url, parse_mode = 'html')
-                if match('^https://(www.)?youtu(.)?be(.com)?/(.*)', url):   #For Youtube Video
-                    await self.youtube_downloader(self.event, process_msg, self.bot, url, log_object)
-                else:   #Normal Url
-                    await self.url_downloader(self.event, process_msg, self.bot, url)
-            elif str(type(message_info.entities[0])) == "<class 'telethon.tl.types.MessageEntityMention'>":
-                process_msg = await event.respond(processing_file, parse_mode = 'html')
-                await self.file_downloader(self.event, process_msg, self.bot, message_info)
-        else:   #Telegram File
+        if message_info.file:  #For Telegram File/media
             process_msg = await event.respond(processing_file, parse_mode = 'html')
             await self.file_downloader(self.event, process_msg, self.bot, message_info)
+        else:
+            url = message_info.text
+            process_msg = await event.respond(processing_url, parse_mode = 'html')
+            if match('^https://(www.)?youtu(.)?be(.com)?/(.*)', url):   #For Youtube Video
+                await self.youtube_downloader(self.event, process_msg, self.bot, url, log_object)
+            else:   #Normal Url
+                await self.url_downloader(self.event, process_msg, self.bot, url)
         return self
 
     #Downloading Youtube Video

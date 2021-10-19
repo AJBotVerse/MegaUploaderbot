@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 
 
-"""Importing environ from os Library"""
+# Importing Inbuilt packages
 from os import environ
 
 
-'''Credentials'''
+"""Credentials"""
+bot_token = environ["BOT_TOKEN"]
 
+api_id = environ["API_ID"]
 
-api_id = environ["API_ID"] #Your API ID
+api_hash = environ["API_HASH"]
 
-api_hash = environ["API_HASH"]   #Your API Hash
+connection_string = environ["MONGO_STR"]
 
-bot_token = environ["BOT_TOKEN"]  #Your Bot Token
-
-mongo_connection_string = environ["MONGO_CON_STRING"]    #Your MongoDB Connection String

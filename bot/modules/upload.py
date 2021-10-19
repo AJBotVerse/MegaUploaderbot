@@ -4,8 +4,11 @@
 '''It will Handle Uploading of File'''
 
 
-'''Importing Modules and Libraries'''
+"""Importing"""
+# Importing Inbuilt packages
 from os import remove
+
+# Importing Credentials & Developer defined modules
 from bot.modules.funcs import line_number, task
 from bot.perma_var import successful_uploaded, uploading_unsuccessful
 
