@@ -51,6 +51,7 @@ class Downloader:
             await bot.edit_message(process_msg, ytVideoUnavailable, parse_mode = 'html')
         except Exception as e:
             task("No Task")
+            await bot.send_message(dev, f'In downloader.py {line_number()} {e}')
             print(line_number(), e)
             await bot.edit_message(process_msg, unsuccessful_upload, parse_mode = 'html')
         else:
@@ -78,14 +79,12 @@ class Downloader:
                         except Exception as e:
                             task("No Task")
                             files_after = listdir(downloadFolder)
-                            print(line_number(), e)
+                            await bot.send_message(dev, f'In downloader.py {line_number()} {e}')
                             await bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
                             try:
                                 filename = str([i for i in files_after if i not in files_before][0])
                             except IndexError:
                                 pass
-                            except Exception as e:
-                                print(line_number(), e)
                             else:
                                 #Deleting Incomplete File
                                 remove(f'{downloadFolder}{filename}')
@@ -116,7 +115,7 @@ class Downloader:
     async def url_downloader(self, event, process_msg, bot, url):
         task("Running")
 
-        len_file = await length_of_file(url)
+        len_file = await length_of_file(bot, url)
         if len_file == 'Valid':
             msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
             userid = event.sender_id
@@ -130,12 +129,10 @@ class Downloader:
                 percentage = int(downObj.get_progress()*100)
                 msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
                 sleep(1)
-            print('downloading done')
             try:
                 filename = path.basename(downObj.get_dest())
-                print(1)
             except Exception as e:
-                print(line_number(), e)
+                await bot.send_message(dev, f'In downloader.py {line_number()} {e}')
             if downObj.isSuccessful():
                 n_msg = await bot.edit_message(msg, uploading_msg, parse_mode = 'html')
                 self.n_msg, self.filename = n_msg, filename
@@ -145,11 +142,11 @@ class Downloader:
                 try:
                     remove(f'{downloadFolder}{filename}')
                 except Exception as e:
-                    print(line_number(), e)
+                    await bot.send_message(dev, f'In downloader.py {line_number()} {e}')
                 await bot.delete_messages(None, msg)
                 await bot.send_message(userid, unsuccessful_upload, parse_mode = 'html')
                 for e in downObj.get_errors():
-                    print(line_number(), str(e))
+                    await bot.send_message(dev, f'In downloader.py {line_number()} {str(e)}')
 
         elif len_file == 'Not Valid':
             await bot.edit_message(process_msg, unsuccessful_upload, parse_mode = 'html')
@@ -179,14 +176,12 @@ class Downloader:
                 task("No Task")
                 await bot.delete_messages(None, msg)
                 await bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
-                print(line_number(), e)
+                await bot.send_message(dev, f'In downloader.py {line_number()} {e}')
                 files_after = listdir(downloadFolder)
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:
                     pass
-                except Exception as e:
-                    print(line_number(), e)
                 else:
                     remove(f'{downloadFolder}{filename}')
             else:
@@ -197,9 +192,6 @@ class Downloader:
                     task("No Task")
                     await bot.delete_messages(None, msg)
                     await bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
-                except Exception as e:
-                    task("No Task")
-                    print(line_number(), e)
                 else:   #File Downloaded Successfully
                     n_msg = await bot.edit_message(msg, uploading_msg, parse_mode = 'html')
                     self.n_msg, self.filename = n_msg, filename

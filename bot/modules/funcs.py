@@ -15,7 +15,7 @@ from os import path
 from __main__ import __file__
 
 # Importing Credentials & Developer defined modules
-from bot.perma_var import not_joined_community
+from bot.perma_var import not_joined_community, dev
 from bot.credentials import connection_string
 # from testexp.creds import connection_string
 
@@ -30,7 +30,7 @@ collection_login = db_login_detail['login_details']
 #Function to find error in which file and in which line
 def line_number():
     cf = currentframe()
-    return f'In File {path.basename(__file__)} at line {cf.f_back.f_lineno}'
+    return f'at line {cf.f_back.f_lineno}'
 
 #Checking User whether he joined channel and group or not joined.
 async def search_user_in_community(event, bot):
@@ -41,7 +41,7 @@ async def search_user_in_community(event, bot):
         await event.respond(not_joined_community, parse_mode = 'html', buttons = [Button.url('Join our Channel.','https://t.me/AJPyroVerse'), Button.url('Join our Group.','https://t.me/AJPyroVerseGroup')])
         return
     except Exception as e:
-        print(line_number(), e)
+        await bot.send_message(dev, f'In funcs.py {line_number()} {e}')
     else:
         return True
 
@@ -62,7 +62,7 @@ def getting_email_pass(userid):
         return None
 
 #it will check the length of file
-async def length_of_file(url):
+async def length_of_file(bot, url):
     try:
         h = head(url, allow_redirects=True)
         header = h.headers
@@ -73,7 +73,7 @@ async def length_of_file(url):
         else:   #File`s Size is in the Limit
             return 'Valid'
     except Exception as e:  #File is not Exist in Given URL
-        print(line_number(), e)
+        await bot.send_message(dev, f'In funcs.py {line_number()} {e}')
         return 'Not Valid'
 
 #Task Updating or Status Checking

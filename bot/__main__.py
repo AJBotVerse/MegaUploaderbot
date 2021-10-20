@@ -92,7 +92,7 @@ async def broadcast_handler(event):
         except IndexError:
             await event.respond(broadcast_failed, parse_mode = 'html')
         except Exception as e:
-            print(line_number(), e)
+            await event.respond(f'In __main__.py {line_number()} {e}')
         else:
             #Getting User`s Id from Database
             for userid in [document['userid'] for document in collection_login.find()]:
@@ -102,7 +102,7 @@ async def broadcast_handler(event):
                 except rpcerrorlist.UserIsBlockedError:
                     pass
                 except Exception as e:
-                    print(line_number(), e)
+                    await event.respond(f'In __main__.py {line_number()} {e}')
     return None
 
 @bot.on(events.NewMessage)
