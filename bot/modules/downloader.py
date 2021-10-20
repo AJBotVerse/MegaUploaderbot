@@ -66,16 +66,16 @@ class Downloader:
 
                         #Getting String Value From event.data
                         itag = event.data.decode('utf-8')
-                        files_before = listdir()
+                        files_before = listdir('/app/download')
                         stream = yt.streams.get_by_itag(itag)
 
                         #Trying To Download Video To Server
                         await bot.edit_message(msg, starting_to_download, parse_mode = 'html')
                         try:
-                            stream.download()
+                            stream.download(output_path = '/app/download')
                         except Exception as e:
                             task("No Task")
-                            files_after = listdir()
+                            files_after = listdir('/app/download')
                             print(line_number(), e)
                             await bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
                             try:
@@ -88,7 +88,7 @@ class Downloader:
                                 #Deleting Incomplete File
                                 remove(filename)
                         else:
-                            files_after = listdir()
+                            files_after = listdir('/app/download')
                             try:
                                 filename = str([i for i in files_after if i not in files_before][0])
                             except IndexError:
@@ -117,9 +117,8 @@ class Downloader:
         if len_file == 'Valid':
             msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
             userid = event.sender_id
-            files_before = listdir()
-            downObj = SmartDL(url, dest='/app/download')
-            downObj.start()
+            downObj = SmartDL(url, dest = '/app/download')
+            downObj.start(blocking= False)
             while not downObj.isFinished():
                 progress_bar = downObj.get_progress_bar().replace('#', '■').replace('-', '□')
                 percentage = downObj.get_progress()*100
@@ -128,18 +127,24 @@ class Downloader:
                 remaining = downObj.get_eta(human=True)
                 msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
                 sleep(1)
-
-            if downObj.isSuccessful():
+            try:
                 filename = path.basename(downObj.get_dest())
+            except Exception as e:
+                print(line_number(), e)
+            if downObj.isSuccessful():
                 n_msg = await bot.edit_message(msg, uploading_msg, parse_mode = 'html')
                 self.n_msg, self.filename = n_msg, filename
             else:
                 task("No Task")
+                try:
+                    remove(f'/app/download/{filename}')
+                except Exception as e:
+                    print(line_number(), e)
                 await bot.delete_messages(None, msg)
                 await bot.send_message(userid, unsuccessful_upload, parse_mode = 'html')
                 for e in downObj.get_errors():
                     print(line_number(), str(e))
-                    
+
         elif len_file == 'Not Valid':
             await bot.edit_message(process_msg, unsuccessful_upload, parse_mode = 'html')
         else:
@@ -159,7 +164,7 @@ class Downloader:
         else:
             userid = event.sender_id
             try:
-                files_before = listdir()
+                files_before = listdir('/app/download')
                 msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
 
                 #Trying to Download File to Server
@@ -169,7 +174,7 @@ class Downloader:
                 await bot.delete_messages(None, msg)
                 await bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
                 print(line_number(), e)
-                files_after = listdir()
+                files_after = listdir('/app/download')
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:
@@ -179,7 +184,7 @@ class Downloader:
                 else:
                     remove(filename)
             else:
-                files_after = listdir()
+                files_after = listdir('/app/download')
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:  #Dowloading Failed

@@ -33,6 +33,7 @@ class Upload:
     #Uploading File
     async def upload_start(self, bot, msg, userid):
         mlog = self.login
+        self.filename = f'app/download/{self.filename}'
         try:    #Trying To Upload the File
             mlog.upload(self.filename)
         except Exception as e:  #Not Uploaded
