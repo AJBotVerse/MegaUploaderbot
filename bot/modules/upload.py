@@ -10,7 +10,7 @@ from os import remove
 
 # Importing Credentials & Developer defined modules
 from bot.modules.funcs import line_number, task
-from bot.perma_var import successful_uploaded, uploading_unsuccessful
+from bot.perma_var import successful_uploaded, uploading_unsuccessful, downloadFolder
 
 
 '''Creating Class For Uploading The File'''
@@ -33,17 +33,17 @@ class Upload:
     #Uploading File
     async def upload_start(self, bot, msg, userid):
         mlog = self.login
-        self.filename = f'app/download/{self.filename}'
+        self.filePath = f'{downloadFolder}{self.filename}'
         try:    #Trying To Upload the File
-            mlog.upload(self.filename)
+            mlog.upload(self.filePath)
         except Exception as e:  #Not Uploaded
             self.result = False
-            remove(self.filename)
+            remove(self.filePath)
             print(line_number(), e)
             await bot.delete_messages(None, msg)
             await bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
         else:   #Successfully Uploaded
-            remove(self.filename)
+            remove(self.filePath)
             await bot.delete_messages(None, msg)
             await bot.send_message(userid, successful_uploaded, parse_mode = 'html')
         task("No Task")

@@ -17,6 +17,7 @@ from __main__ import __file__
 # Importing Credentials & Developer defined modules
 from bot.perma_var import not_joined_community
 from bot.credentials import connection_string
+# from testexp.creds import connection_string
 
 
 '''Connecting To Database'''

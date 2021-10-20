@@ -13,6 +13,7 @@ from logging import basicConfig, WARNING
 from bot.modules.downloader import *
 from bot.modules.login import *
 from bot.credentials import api_id, api_hash, bot_token
+# from testexp.creds import api_id, api_hash, bot_token
 
 
 '''For Displaying Errors&Warnings Better'''

@@ -4,12 +4,11 @@
 """Importing"""
 # Importing External Packages
 from telethon import Button, events
-from pytube import YouTube
+from pytube import YouTube, exceptions
 from pySmartDL import SmartDL
 
 # Importing Inbuilt packages
-from os import listdir, remove, linesep, path
-from subprocess import Popen, PIPE
+from os import listdir, remove, path
 from re import match
 from time import sleep
 
@@ -37,16 +36,19 @@ class Downloader:
             url = message_info.text
             process_msg = await event.respond(processing_url, parse_mode = 'html')
             if match('^https://(www.)?youtu(.)?be(.com)?/(.*)', url):   #For Youtube Video
-                await self.youtube_downloader(self.event, process_msg, self.bot, url, log_object)
+                await self.youtube_downloader(process_msg, self.bot, url, log_object)
             else:   #Normal Url
                 await self.url_downloader(self.event, process_msg, self.bot, url)
         return self
 
     #Downloading Youtube Video
-    async def youtube_downloader(self, event, process_msg, bot, url, log_obj):
+    async def youtube_downloader(self, process_msg, bot, url, log_obj):
         try:
             yt = YouTube(url)
             qualities = yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
+        except exceptions.VideoUnavailable:
+            task("No Task")
+            await bot.edit_message(process_msg, ytVideoUnavailable, parse_mode = 'html')
         except Exception as e:
             task("No Task")
             print(line_number(), e)
@@ -66,16 +68,16 @@ class Downloader:
 
                         #Getting String Value From event.data
                         itag = event.data.decode('utf-8')
-                        files_before = listdir('/app/download')
+                        files_before = listdir(downloadFolder)
                         stream = yt.streams.get_by_itag(itag)
 
                         #Trying To Download Video To Server
                         await bot.edit_message(msg, starting_to_download, parse_mode = 'html')
                         try:
-                            stream.download(output_path = '/app/download')
+                            stream.download(output_path = downloadFolder)
                         except Exception as e:
                             task("No Task")
-                            files_after = listdir('/app/download')
+                            files_after = listdir(downloadFolder)
                             print(line_number(), e)
                             await bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
                             try:
@@ -86,11 +88,12 @@ class Downloader:
                                 print(line_number(), e)
                             else:
                                 #Deleting Incomplete File
-                                remove(filename)
+                                remove(f'{downloadFolder}{filename}')
                         else:
-                            files_after = listdir('/app/download')
+                            files_after = listdir(downloadFolder)
                             try:
                                 filename = str([i for i in files_after if i not in files_before][0])
+                                print(filename)
                             except IndexError:
                                 #File Not Downloaded
                                 task("No Task")
@@ -117,7 +120,7 @@ class Downloader:
         if len_file == 'Valid':
             msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
             userid = event.sender_id
-            downObj = SmartDL(url, dest = '/app/download')
+            downObj = SmartDL(url, dest = downloadFolder)
             downObj.start(blocking= False)
             while not downObj.isFinished():
                 progress_bar = downObj.get_progress_bar().replace('#', '■').replace('-', '□')
@@ -125,8 +128,8 @@ class Downloader:
                 completed = downObj.get_dl_size(human=True)
                 speed = downObj.get_speed(human=True)
                 remaining = downObj.get_eta(human=True)
-                msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
                 sleep(1)
+                msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
             try:
                 filename = path.basename(downObj.get_dest())
             except Exception as e:
@@ -137,7 +140,7 @@ class Downloader:
             else:
                 task("No Task")
                 try:
-                    remove(f'/app/download/{filename}')
+                    remove(f'{downloadFolder}{filename}')
                 except Exception as e:
                     print(line_number(), e)
                 await bot.delete_messages(None, msg)
@@ -164,17 +167,17 @@ class Downloader:
         else:
             userid = event.sender_id
             try:
-                files_before = listdir('/app/download')
+                files_before = listdir(downloadFolder)
                 msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
 
                 #Trying to Download File to Server
-                await bot.download_media(message_info)
+                await bot.download_media(message_info, file = downloadFolder)
             except Exception as e:  #Downlading Failed
                 task("No Task")
                 await bot.delete_messages(None, msg)
                 await bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
                 print(line_number(), e)
-                files_after = listdir('/app/download')
+                files_after = listdir(downloadFolder)
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:
@@ -182,9 +185,9 @@ class Downloader:
                 except Exception as e:
                     print(line_number(), e)
                 else:
-                    remove(filename)
+                    remove(f'{downloadFolder}{filename}')
             else:
-                files_after = listdir('/app/download')
+                files_after = listdir(downloadFolder)
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:  #Dowloading Failed
