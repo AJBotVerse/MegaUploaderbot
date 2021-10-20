@@ -121,22 +121,25 @@ class Downloader:
             msg = await bot.edit_message(process_msg, starting_to_download, parse_mode = 'html')
             userid = event.sender_id
             downObj = SmartDL(url, dest = downloadFolder)
-            downObj.start(blocking= False)
+            downObj.start(blocking = False)
             while not downObj.isFinished():
                 progress_bar = downObj.get_progress_bar().replace('#', '■').replace('-', '□')
-                percentage = downObj.get_progress()*100
                 completed = downObj.get_dl_size(human=True)
                 speed = downObj.get_speed(human=True)
                 remaining = downObj.get_eta(human=True)
-                sleep(1)
+                percentage = int(downObj.get_progress()*100)
                 msg = await bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
+                sleep(1)
+            print('downloading done')
             try:
                 filename = path.basename(downObj.get_dest())
+                print(1)
             except Exception as e:
                 print(line_number(), e)
             if downObj.isSuccessful():
                 n_msg = await bot.edit_message(msg, uploading_msg, parse_mode = 'html')
                 self.n_msg, self.filename = n_msg, filename
+                return True
             else:
                 task("No Task")
                 try:
