@@ -10,9 +10,10 @@ from telethon.sync import TelegramClient
 from logging import basicConfig, WARNING
 
 # Importing Credentials & Developer defined modules
-from bot.modules.downloader import *
-from bot.modules.login import *
-from bot.credentials import api_id, api_hash, bot_token
+from plugins.downloader.downloader import *
+from plugins.login import *
+from plugins.upload import Upload
+from bot.botCreds import api_id, api_hash, bot_token
 # from testexp.creds import api_id, api_hash, bot_token
 
 
@@ -109,7 +110,7 @@ async def broadcast_handler(event):
 async def upload_handler(event):
     message_info = event.message
     entity = message_info.entities
-    
+
     if message_info.media or entity:  #Verifying Url And File Media
         if entity:
             if str(type(message_info.entities[0])) not in ("<class 'telethon.tl.types.MessageEntityUrl'>", "<class 'telethon.tl.types.MessageEntityMention'>"):

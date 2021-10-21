@@ -15,8 +15,8 @@ from os import path
 from __main__ import __file__
 
 # Importing Credentials & Developer defined modules
-from bot.perma_var import not_joined_community, dev
-from bot.credentials import connection_string
+from bot.botMessages import not_joined_community, dev
+from bot.botCreds import connection_string
 # from testexp.creds import connection_string
 
 

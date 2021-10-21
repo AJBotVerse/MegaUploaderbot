@@ -9,8 +9,8 @@
 from os import remove
 
 # Importing Credentials & Developer defined modules
-from bot.modules.funcs import line_number, task
-from bot.perma_var import successful_uploaded, uploading_unsuccessful, downloadFolder, dev
+from plugins.helper import line_number, task
+from bot.botMessages import successful_uploaded, uploading_unsuccessful, downloadFolder, dev
 
 
 '''Creating Class For Uploading The File'''
