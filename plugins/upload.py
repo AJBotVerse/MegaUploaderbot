@@ -46,7 +46,8 @@ class Upload:
             remove(self.filePath)
             await bot.delete_messages(None, msg)
             await bot.send_message(userid, successful_uploaded, parse_mode = 'html')
-        task("No Task")
-        return None
+        finally:
+            task("No Task")
+            return
     
     
