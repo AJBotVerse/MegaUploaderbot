@@ -38,6 +38,7 @@ class Downloader:
 
     #Downloading Youtube Video
     async def youtube_downloader(self, process_msg, bot, url, log_object):
+        task("Running")
         ytDl = YTDown(self.event, process_msg, bot, url, log_object)
         await ytDl.start()
         self.filename = None

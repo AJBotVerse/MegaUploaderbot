@@ -101,7 +101,6 @@ class YTDown:
                             value += "60fps"
                         value += ',' + str(int(quality.filesize/1048576)) + 'mb'
                         quality_button.append(Button.inline(value, quality.itag))
-            task("No Task")
             if quality_button:
                 self.bmsg = await self.bot.edit_message(self.process_msg, choose_quality, parse_mode = 'html', buttons = quality_button)
                 
@@ -153,6 +152,7 @@ class YTDown:
                         await self.bot.edit_message(self.msg, task_ongoing, parse_mode = 'html')
                     return
                 sleep(60)
+                task("No Task")
                 await self.bot.delete_messages(None, self.bmsg)
                 return
             else:
