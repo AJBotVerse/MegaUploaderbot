@@ -78,7 +78,6 @@ class YTDown:
             self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
         try:
             self.yt = YouTube(self.url, on_progress_callback = progress_function)
-            # self.yt.register_on_complete_callback()
             # self.qualities = self.yt.streams.filter(adaptive = True)   #Filtering Streams Having Audio & Video
             self.qualities = self.yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
         except exceptions.VideoUnavailable:
@@ -148,8 +147,6 @@ class YTDown:
                             return True
                    
                 await asyncio.sleep(60)
-                task("No Task")
-                await self.bot.delete_messages(None, self.bmsg)
                 return
             else:
                 await self.bot.edit_message(self.process_msg, all_above_limit, parse_mode = 'html')
