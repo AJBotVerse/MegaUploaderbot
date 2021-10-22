@@ -61,8 +61,7 @@ class YTDown:
     async def start(self):
 
         async def edit_msg(progress_bar, percentage, completed, speed, remaining):
-            global msg
-            msg = await self.bot.edit_message(msg, f"<b>Downloading... !! Keep patience...\n [ {progress_bar}]\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
+            self.msg = await self.bot.edit_message(self.msg, f"<b>Downloading... !! Keep patience...\n [ {progress_bar}]\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
 
         def progress_function(stream, _chunk, bytes_remaining):
             filesize = stream.filesize
@@ -119,8 +118,7 @@ class YTDown:
 
                         #Trying To Download Video To Server
                         try:
-                            global msg
-                            msg = await self.bot.edit_message(self.bmsg, starting_to_download, parse_mode = 'html')
+                            self.msg = await self.bot.edit_message(self.bmsg, starting_to_download, parse_mode = 'html')
                             global t1
                             t1 = time()
                             stream.download(output_path = self.tmpVideoDownload)
@@ -128,7 +126,7 @@ class YTDown:
                             task("No Task")
                             files_after = listdir(self.tmpVideoDownload)
                             await self.bot.send_message(dev, f'In ytDL.py {line_number()} {e}')
-                            await self.bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
+                            await self.bot.edit_message(self.msg, unsuccessful_upload, parse_mode = 'html')
                             try:
                                 videoFile = str([i for i in files_after if i not in files_before][0])
                             except IndexError:
@@ -143,16 +141,16 @@ class YTDown:
                             except IndexError:
                                 #File Not Downloaded
                                 task("No Task")
-                                await self.bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
+                                await self.bot.edit_message(self.msg, unsuccessful_upload, parse_mode = 'html')
                             else:
                                 #File Downloaded Successfully to Server
                                 self.videoFile = videoFile
-                                n_msg = await self.bot.edit_message(msg, uploading_msg, parse_mode = 'html')
+                                n_msg = await self.bot.edit_message(self.msg, uploading_msg, parse_mode = 'html')
                                 # await self.downAudio()
                                 await Upload.start(self.videoFile, self.log_obj, self.bot, n_msg, event.sender_id)
                                 return True
                     else:
-                        await self.bot.edit_message(msg, task_ongoing, parse_mode = 'html')
+                        await self.bot.edit_message(self.msg, task_ongoing, parse_mode = 'html')
                     return
                 sleep(60)
                 await self.bot.delete_messages(None, self.bmsg)
