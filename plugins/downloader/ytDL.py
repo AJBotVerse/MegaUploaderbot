@@ -30,33 +30,33 @@ class YTDown:
         # self.tmpAudioDownload = f'{downloadFolder}\\tmp\\audio\\'
         self.tmpAudioDownload = f'{downloadFolder}/tmp/audio/'
     
-    async def downAudio(self):
-        files_before = listdir(self.tmpAudioDownload)
-        listAudio = {quality.abr[:-4] : quality.itag for quality in self.qualities if quality.mime_type == 'audio/webm'}
-        sizeA = (int(i) for i in listAudio)
-        stream = self.yt.streams.get_by_itag(listAudio[f'{max(sizeA)}'])
-        stream.download(output_path = self.tmpAudioDownload)
-        files_after = listdir(self.tmpAudioDownload)
-        try:
-            audioFile = str([i for i in files_after if i not in files_before][0])
-        except IndexError:
-            print('audio file not downloaded')
-        else:
-            await self.merge(audioFile, self.videoFile)
-        return
+    # async def downAudio(self):
+    #     files_before = listdir(self.tmpAudioDownload)
+    #     listAudio = {quality.abr[:-4] : quality.itag for quality in self.qualities if quality.mime_type == 'audio/webm'}
+    #     sizeA = (int(i) for i in listAudio)
+    #     stream = self.yt.streams.get_by_itag(listAudio[f'{max(sizeA)}'])
+    #     stream.download(output_path = self.tmpAudioDownload)
+    #     files_after = listdir(self.tmpAudioDownload)
+    #     try:
+    #         audioFile = str([i for i in files_after if i not in files_before][0])
+    #     except IndexError:
+    #         print('audio file not downloaded')
+    #     else:
+    #         await self.merge(audioFile, self.videoFile)
+    #     return
 
-    async def merge(self, audioFile, videoFile):
-        videopath = f'{self.tmpVideoDownload}{videoFile}'
-        audiopath = f'{self.tmpAudioDownload}{audioFile}'
-        videoclip = VideoFileClip(videopath)
-        audioclip = AudioFileClip(audiopath)
-        new_audioclip = CompositeAudioClip([audioclip])
-        videoclip.audio = new_audioclip
-        videoclip.write_videofile(f'{downloadFolder}{videoFile}')
-        self.filename = videoFile
-        remove(videopath)
-        remove(audiopath)
-        return
+    # async def merge(self, audioFile, videoFile):
+    #     videopath = f'{self.tmpVideoDownload}{videoFile}'
+    #     audiopath = f'{self.tmpAudioDownload}{audioFile}'
+    #     videoclip = VideoFileClip(videopath)
+    #     audioclip = AudioFileClip(audiopath)
+    #     new_audioclip = CompositeAudioClip([audioclip])
+    #     videoclip.audio = new_audioclip
+    #     videoclip.write_videofile(f'{downloadFolder}{videoFile}')
+    #     self.filename = videoFile
+    #     remove(videopath)
+    #     remove(audiopath)
+    #     return
 
     async def start(self):
 
@@ -79,7 +79,8 @@ class YTDown:
             self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
         try:
             self.yt = YouTube(self.url, on_progress_callback = progress_function)
-            self.qualities = self.yt.streams.filter(adaptive = True)   #Filtering Streams Having Audio & Video
+            # self.qualities = self.yt.streams.filter(adaptive = True)   #Filtering Streams Having Audio & Video
+            self.qualities = self.yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
         except exceptions.VideoUnavailable:
             task("No Task")
             await self.bot.edit_message(self.process_msg, ytVideoUnavailable, parse_mode = 'html')
@@ -149,8 +150,8 @@ class YTDown:
                                 #File Downloaded Successfully to Server
                                 self.videoFile = videoFile
                                 n_msg = await self.bot.edit_message(msg, uploading_msg, parse_mode = 'html')
-                                await self.downAudio()
-                                await Upload.start(self.filename, self.log_obj, self.bot, n_msg, event.sender_id)
+                                # await self.downAudio()
+                                await Upload.start(self.videoFile, self.log_obj, self.bot, n_msg, event.sender_id)
                                 return True
                     else:
                         await self.bot.edit_message(msg, task_ongoing, parse_mode = 'html')
