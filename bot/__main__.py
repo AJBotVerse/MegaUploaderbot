@@ -13,8 +13,8 @@ from logging import basicConfig, WARNING
 from plugins.downloader.downloader import *
 from plugins.login import *
 from plugins.upload import Upload
-# from bot.botCreds import api_id, api_hash, bot_token
-from testexp.creds import api_id, api_hash, bot_token
+from bot.botCreds import api_id, api_hash, bot_token
+# from testexp.creds import api_id, api_hash, bot_token
 
 
 '''For Displaying Errors&Warnings Better'''
