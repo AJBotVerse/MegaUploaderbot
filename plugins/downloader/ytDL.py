@@ -32,13 +32,11 @@ class YTDown:
     
     async def downAudio(self):
         files_before = listdir(self.tmpAudioDownload)
-        print(files_before)
         listAudio = {quality.abr[:-4] : quality.itag for quality in self.qualities if quality.mime_type == 'audio/webm'}
         sizeA = (int(i) for i in listAudio)
         stream = self.yt.streams.get_by_itag(listAudio[f'{max(sizeA)}'])
         stream.download(output_path = self.tmpAudioDownload)
         files_after = listdir(self.tmpAudioDownload)
-        print(files_after)
         try:
             audioFile = str([i for i in files_after if i not in files_before][0])
         except IndexError:
