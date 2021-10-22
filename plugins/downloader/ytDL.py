@@ -8,7 +8,7 @@ from telethon import events, Button
 
 # Importing Inbuilt packages
 from time import time
-from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
+# from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
 import asyncio
 
 # Importing Required developer defined data
