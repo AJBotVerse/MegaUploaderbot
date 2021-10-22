@@ -6,4 +6,3 @@ requests
 cryptg
 pytube
 pySmartDL
-moviepy

@@ -78,7 +78,8 @@ class YTDown:
             remaining = int(((bytes_remaining/1024)/1024)/speed)
             self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
         try:
-            self.yt = YouTube(self.url, on_progress_callback = progress_function)
+            self.yt = YouTube(self.url)
+            self.yt.register_on_complete_callback(progress_function)
             # self.qualities = self.yt.streams.filter(adaptive = True)   #Filtering Streams Having Audio & Video
             self.qualities = self.yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
         except exceptions.VideoUnavailable:
@@ -91,19 +92,16 @@ class YTDown:
         else:
             #Creating Buttons for Selecting Quality
             quality_button = []
-            twoButton = []
             for quality in self.qualities:
                 if quality.type == "video":
-                    value = quality.resolution
-                    if not value:
-                        continue
-                    if quality.fps == 60:
-                        value += "60fps"
-                    value += ',' + str(int(quality.filesize/1048576)) + 'mb'
-                    twoButton.append(Button.inline(value, quality.itag))
-                    if len(twoButton) == 2:
-                        quality_button.append(twoButton)
-                        twoButton = []
+                    if quality.filesize <= 419430400:
+                        value = quality.resolution
+                        if not value:
+                            continue
+                        if quality.fps == 60:
+                            value += "60fps"
+                        value += ',' + str(int(quality.filesize/1048576)) + 'mb'
+                        quality_button.append(Button.inline(value, quality.itag))
             task("No Task")
             if quality_button:
                 self.bmsg = await self.bot.edit_message(self.process_msg, choose_quality, parse_mode = 'html', buttons = quality_button)
@@ -156,5 +154,8 @@ class YTDown:
                     else:
                         await self.bot.edit_message(msg, task_ongoing, parse_mode = 'html')
                     return
+                sleep(60)
+                await self.bot.delete_messages(None, self.bmsg)
+                return
             else:
                 await self.bot.edit_message(self.process_msg, all_above_limit, parse_mode = 'html')
