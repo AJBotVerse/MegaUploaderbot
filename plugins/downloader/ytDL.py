@@ -77,8 +77,8 @@ class YTDown:
             remaining = int(((bytes_remaining/1024)/1024)/speed)
             self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
         try:
-            self.yt = YouTube(self.url)
-            self.yt.register_on_complete_callback(progress_function)
+            self.yt = YouTube(self.url, on_progress_callback = progress_function)
+            # self.yt.register_on_complete_callback()
             # self.qualities = self.yt.streams.filter(adaptive = True)   #Filtering Streams Having Audio & Video
             self.qualities = self.yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
         except exceptions.VideoUnavailable:
