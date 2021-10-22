@@ -7,7 +7,6 @@ from pytube import YouTube, exceptions
 from telethon import events, Button
 
 # Importing Inbuilt packages
-from time import time
 import asyncio
 
 # Importing Required developer defined data

@@ -2,8 +2,8 @@
 
 dev = 1972357814
 
-downloadFolder = '/app/download/'
-# downloadFolder = 'D:\Projects\Public\MegaUploaderbot\download\\'
+# downloadFolder = '/app/download/'
+downloadFolder = 'D:\Projects\Public\MegaUploaderbot\download\\'
 
 common_text = "\n\n<u>If you are facing any problem, so report at @AJPyroVerseGroup</u>"
 
