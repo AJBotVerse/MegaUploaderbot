@@ -25,26 +25,26 @@ class YTDown:
         self.event = event
         self.url = url
         self.log_obj = log_object
-        self.tmpVideoDownload = f'{downloadFolder}\\tmp\\video\\'
-        # self.tmpVideoDownload = f'{downloadFolder}/tmp/video/'
-        self.tmpAudioDownload = f'{downloadFolder}\\tmp\\audio\\'
-        # self.tmpAudioDownload = f'{downloadFolder}/tmp/audio/'
+        # self.tmpVideoDownload = f'{downloadFolder}\\tmp\\video\\'
+        self.tmpVideoDownload = f'{downloadFolder}/tmp/video/'
+        # self.tmpAudioDownload = f'{downloadFolder}\\tmp\\audio\\'
+        self.tmpAudioDownload = f'{downloadFolder}/tmp/audio/'
     
-    def downAudio(self):
+    async def downAudio(self):
         files_before = listdir(self.tmpAudioDownload)
+        print(files_before)
         listAudio = {quality.abr[:-4] : quality.itag for quality in self.qualities if quality.mime_type == 'audio/webm'}
-        sizeA = [int(i) for i in listAudio]
-        sizeA.sort()
-        maxSize = sizeA[len(sizeA)-1]
-        stream = self.yt.streams.get_by_itag(listAudio[f'{maxSize}'])
+        sizeA = (int(i) for i in listAudio)
+        stream = self.yt.streams.get_by_itag(listAudio[f'{max(sizeA)}'])
         stream.download(output_path = self.tmpAudioDownload)
         files_after = listdir(self.tmpAudioDownload)
+        print(files_after)
         try:
             audioFile = str([i for i in files_after if i not in files_before][0])
         except IndexError:
             print('audio file not downloaded')
         else:
-            self.merge(audioFile, self.videoFile)
+            await self.merge(audioFile, self.videoFile)
         return
 
     async def merge(self, audioFile, videoFile):
@@ -58,6 +58,7 @@ class YTDown:
         self.filename = videoFile
         remove(videopath)
         remove(audiopath)
+        return
 
     async def start(self):
 
@@ -86,11 +87,24 @@ class YTDown:
             await self.bot.edit_message(self.process_msg, ytVideoUnavailable, parse_mode = 'html')
         except Exception as e:
             task("No Task")
-            await self.bot.send_message(dev, f'In downloader.py {line_number()} {e}')
+            await self.bot.send_message(dev, f'In ytDL.py {line_number()} {e}')
             await self.bot.edit_message(self.process_msg, unsuccessful_upload, parse_mode = 'html')
         else:
             #Creating Buttons for Selecting Quality
-            quality_button = [Button.inline(f'{quality.resolution}, {int(quality.filesize/1048576)}mb', quality.itag) for quality in self.qualities if quality.filesize <= 419430400]
+            quality_button = []
+            twoButton = []
+            for quality in self.qualities:
+                if quality.type == "video":
+                    value = quality.resolution
+                    if not value:
+                        continue
+                    if quality.fps == 60:
+                        value += "60fps"
+                    value += ',' + str(int(quality.filesize/1048576)) + 'mb'
+                    twoButton.append(Button.inline(value, quality.itag))
+                    if len(twoButton) == 2:
+                        quality_button.append(twoButton)
+                        twoButton = []
             task("No Task")
             if quality_button:
                 self.bmsg = await self.bot.edit_message(self.process_msg, choose_quality, parse_mode = 'html', buttons = quality_button)
@@ -103,7 +117,7 @@ class YTDown:
 
                         #Getting String Value From event.data
                         itag = event.data.decode('utf-8')
-                        files_before = listdir(downloadFolder)
+                        files_before = listdir(self.tmpVideoDownload)
                         stream = self.yt.streams.get_by_itag(itag)
 
                         #Trying To Download Video To Server
@@ -116,28 +130,29 @@ class YTDown:
                         except Exception as e:
                             task("No Task")
                             files_after = listdir(self.tmpVideoDownload)
-                            await self.bot.send_message(dev, f'In downloader.py {line_number()} {e}')
+                            await self.bot.send_message(dev, f'In ytDL.py {line_number()} {e}')
                             await self.bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
                             try:
-                                self.videoFile = str([i for i in files_after if i not in files_before][0])
+                                videoFile = str([i for i in files_after if i not in files_before][0])
                             except IndexError:
                                 pass
                             else:
                                 #Deleting Incomplete File
-                                remove(f'{self.tmpVideoDownload}{self.videoFile}')
+                                remove(f'{self.tmpVideoDownload}{videoFile}')
                         else:
                             files_after = listdir(self.tmpVideoDownload)
                             try:
-                                self.videoFile = str([i for i in files_after if i not in files_before][0])
+                                videoFile = str([i for i in files_after if i not in files_before][0])
                             except IndexError:
                                 #File Not Downloaded
                                 task("No Task")
                                 await self.bot.edit_message(msg, unsuccessful_upload, parse_mode = 'html')
                             else:
                                 #File Downloaded Successfully to Server
+                                self.videoFile = videoFile
                                 n_msg = await self.bot.edit_message(msg, uploading_msg, parse_mode = 'html')
-                                self.downAudio()
-                                await Upload.start(self.filename, self.log_obj, self.bot, msg, event.sender_id)
+                                await self.downAudio()
+                                await Upload.start(self.filename, self.log_obj, self.bot, n_msg, event.sender_id)
                                 return True
                     else:
                         await self.bot.edit_message(msg, task_ongoing, parse_mode = 'html')
