@@ -16,23 +16,6 @@ class TgDown:
 
     async def start(self):
 
-        #Editing Progress Bar
-        async def edit_msg(progress_bar, percentage, completed, speed, remaining):
-            self.msg = await self.bot.edit_message(self.msg, f"<b>Downloading... !! Keep patience...\n [ {progress_bar}]\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
-
-        def progress_function(current, total):
-            progress = int(18*current)
-            progress_bar = '■' * progress + '□' * (18 - progress)
-            percentage = int(current*100)
-            completed = int((current/1024)/1024)
-            time_taken = int(time()) - t1
-            speed = round(completed/time_taken, 2)
-            if speed == 0:
-                speed = 0.1
-            remaining = int((((total - current)/1024)/1024)/speed)
-            self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
-            pass
-
         size_of_file = self.message_info.file.size/1024  #Getting Size of File
         if int(self.message_info.file.size) >= 419430400:    #File Size is more than Limit
             await self.bot.edit_message(self.process_msg, f'This filesize is {size_of_file}mb. {file_limit}', parse_mode = 'html')
@@ -44,7 +27,7 @@ class TgDown:
                 global t1
                 t1 = time()
                 #Trying to Download File to Server
-                await self.bot.download_media(self.message_info, file = downloadFolder, progress_callback = progress_function)
+                await self.bot.download_media(self.message_info, file = downloadFolder)
             except Exception as e:  #Downlading Failed
                 task("No Task")
                 await self.bot.delete_messages(None, self.msg)
