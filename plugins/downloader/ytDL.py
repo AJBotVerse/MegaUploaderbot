@@ -151,7 +151,7 @@ class YTDown:
                     else:
                         await self.bot.edit_message(self.msg, task_ongoing, parse_mode = 'html')
                     return
-                asyncio.sleep(60)
+                await asyncio.sleep(60)
                 task("No Task")
                 await self.bot.delete_messages(None, self.bmsg)
                 return
