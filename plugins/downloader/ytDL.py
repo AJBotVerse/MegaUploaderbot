@@ -8,7 +8,6 @@ from telethon import events, Button
 
 # Importing Inbuilt packages
 from time import time
-# from moviepy.editor import VideoFileClip, AudioFileClip, CompositeAudioClip
 import asyncio
 
 # Importing Required developer defined data
@@ -28,9 +27,11 @@ class YTDown:
 
     async def start(self):
 
+        #Editing Progress Bar
         async def edit_msg(progress_bar, percentage, completed, speed, remaining):
             self.msg = await self.bot.edit_message(self.msg, f"<b>Downloading... !! Keep patience...\n [ {progress_bar}]\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
 
+        #Progress bar function
         def progress_function(stream, _chunk, bytes_remaining):
             filesize = stream.filesize
             completed = round(((filesize - bytes_remaining)/1024)/1024, 1)
@@ -47,7 +48,7 @@ class YTDown:
         try:
             self.yt = YouTube(self.url, on_progress_callback = progress_function)
             self.qualities = self.yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
-        except exceptions.VideoUnavailable:
+        except exceptions.VideoUnavailable: #Video not found
             task("No Task")
             await self.bot.edit_message(self.process_msg, ytVideoUnavailable, parse_mode = 'html')
         except Exception as e:
@@ -109,11 +110,8 @@ class YTDown:
                             #File Downloaded Successfully to Server
                             self.videoFile = videoFile
                             n_msg = await self.bot.edit_message(self.msg, uploading_msg, parse_mode = 'html')
-                            # await self.downAudio()
                             await Upload.start(self.videoFile, self.log_obj, self.bot, n_msg, event.sender_id)
                             return True
-                   
-                # await asyncio.sleep(60)
                 return
             else:
                 await self.bot.edit_message(self.process_msg, all_above_limit, parse_mode = 'html')
