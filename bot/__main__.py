@@ -121,7 +121,7 @@ async def upload_handler(event):
 
     if message_info.media or entity:  #Verifying Url And File Media
         if entity:
-            if str(type(message_info.entities[0])) not in ("<class 'telethon.tl.types.MessageEntityUrl'>", "<class 'telethon.tl.types.MessageEntityMention'>"):
+            if str(type(message_info.entities[0])) not in ("<class 'telethon.tl.types.MessageEntityUrl'>", "<class 'telethon.tl.types.MessageEntityMention'>", "<class 'telethon.tl.types.MessageEntityBold'>"):
                 return
         if await search_user_in_community(event, bot):
             userid = event.sender_id
