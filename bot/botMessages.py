@@ -2,8 +2,8 @@
 
 dev = 1972357814
 
-downloadFolder = '/app/download/'
-# downloadFolder = 'D:\Projects\Public\MegaUploaderbot\download\\'
+# downloadFolder = '/app/download/'
+downloadFolder = 'D:\Projects\Public\MegaUploaderbot\download\\'
 
 common_text = "\n\n<u>If you are facing any problem, so report at @AJPyroVerseGroup</u>"
 
@@ -52,7 +52,5 @@ all_above_limit = 'Sorry, No Quality Found Under Limit'
 processing_url = '<i>Please wait while I am Processing Url</i>'
 
 processing_file = '<i>Please wait while I am Processing File</i>'
-
-task_ongoing = '<u>One Task is already going on, So Please Try Again Later.</u>'
 
 ytVideoUnavailable = '<b>Youtube Video is unavailable.<b>'

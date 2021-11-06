@@ -28,8 +28,8 @@ class Upload:
     #Uploading File
     async def start(self):
         mlog = self.login
-        # self.filePath = f'{self.Downloadfolder}\\{self.filename}'
-        self.filePath = f'{self.Downloadfolder}/{self.filename}'
+        self.filePath = f'{self.Downloadfolder}\\{self.filename}'
+        # self.filePath = f'{self.Downloadfolder}/{self.filename}'
         try:    #Trying To Upload the File
             mlog.upload(self.filePath)
         except Exception as e:  #Not Uploaded

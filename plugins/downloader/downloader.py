@@ -58,7 +58,6 @@ class Downloader:
         self.filename = None
         return
 
-
     #Downloading From Telegram File/Media
     async def file_downloader(self, event, process_msg, bot, message_info, Downloadfolder):
         tgDl = TgDown(message_info, process_msg, bot, event, Downloadfolder)
