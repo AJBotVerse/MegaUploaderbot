@@ -16,8 +16,10 @@ from __main__ import __file__
 
 # Importing Credentials & Developer defined modules
 from bot.botMessages import not_joined_community, dev
-from bot.botCreds import connection_string
-# from testexp.creds import connection_string
+try:
+    from testexp.creds import connection_string
+except ModuleNotFoundError:
+    from bot.botCreds import connection_string
 
 
 '''Connecting To Database'''

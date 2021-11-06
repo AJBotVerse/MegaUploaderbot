@@ -1,8 +1,10 @@
 telethon
-mega.py
 dnspython
 pymongo
 requests
 cryptg
 pytube
+pycryptodome
+pathlib
+tenacity
 pySmartDL
