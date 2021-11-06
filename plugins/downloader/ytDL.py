@@ -6,9 +6,6 @@
 from pytube import YouTube, exceptions
 from telethon import events, Button
 
-# Importing Inbuilt packages
-import asyncio
-
 # Importing Required developer defined data
 from plugins.upload import *
 from plugins.downloader.downloadingData import *
@@ -17,12 +14,13 @@ from bot.botMessages import ytVideoUnavailable, choose_quality, all_above_limit
 
 class YTDown:
 
-    def __init__(self, event, process_msg, bot, url, log_object):
+    def __init__(self, event, process_msg, bot, url, log_object, Downloadfolder):
         self.bot = bot
         self.process_msg = process_msg
         self.event = event
         self.url = url
         self.log_obj = log_object
+        self.Downloadfolder = Downloadfolder
 
     async def start(self):
 
@@ -76,7 +74,7 @@ class YTDown:
 
                     #Getting String Value From event.data
                     itag = event.data.decode('utf-8')
-                    files_before = listdir(downloadFolder)
+                    files_before = listdir(self.Downloadfolder)
                     stream = self.yt.streams.get_by_itag(itag)
 
                     #Trying To Download Video To Server
@@ -84,10 +82,10 @@ class YTDown:
                         self.msg = await self.bot.edit_message(self.bmsg, starting_to_download, parse_mode = 'html')
                         global t1
                         t1 = time()
-                        stream.download(output_path = downloadFolder)
+                        stream.download(output_path = self.Downloadfolder)
                     except Exception as e:
                         task("No Task")
-                        files_after = listdir(downloadFolder)
+                        files_after = listdir(self.Downloadfolder)
                         await self.bot.send_message(dev, f'In ytDL.py {line_number()} {e}')
                         await self.bot.edit_message(self.msg, unsuccessful_upload, parse_mode = 'html')
                         try:
@@ -96,9 +94,9 @@ class YTDown:
                             pass
                         else:
                             #Deleting Incomplete File
-                            remove(f'{downloadFolder}{videoFile}')
+                            rmtree(self.Downloadfolder)
                     else:
-                        files_after = listdir(downloadFolder)
+                        files_after = listdir(self.Downloadfolder)
                         try:
                             videoFile = str([i for i in files_after if i not in files_before][0])
                         except IndexError:
@@ -109,7 +107,8 @@ class YTDown:
                             #File Downloaded Successfully to Server
                             self.videoFile = videoFile
                             n_msg = await self.bot.edit_message(self.msg, uploading_msg, parse_mode = 'html')
-                            await Upload.start(self.videoFile, self.log_obj, self.bot, n_msg, event.sender_id)
+                            self.Uploader = Upload(self.videoFile, self.log_obj, self.bot, n_msg, event.sender_id, self.Downloadfolder)
+                            await self.Uploader.start()
                             return True
                 return
             else:

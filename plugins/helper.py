@@ -78,14 +78,3 @@ async def length_of_file(bot, url):
         await bot.send_message(dev, f'In funcs.py {line_number()} {e}')
         return 'Not Valid'
 
-#Task Updating or Status Checking
-def task(status=None):
-    if status:
-        with open('task.txt', 'w') as newfile:
-            newfile.writelines([status])
-    else:
-        try:
-            with open('task.txt') as file:
-                return file.readlines()[0]
-        except FileNotFoundError:
-            return "No Task"

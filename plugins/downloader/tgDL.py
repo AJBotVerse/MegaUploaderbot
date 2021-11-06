@@ -8,11 +8,12 @@ from plugins.downloader.downloadingData import *
 
 class TgDown:
 
-    def __init__(self, message_info, process_msg, bot, event) -> None:
+    def __init__(self, message_info, process_msg, bot, event, Downloadfolder):
         self.event = event
         self.bot = bot
         self.message_info = message_info
         self.process_msg = process_msg
+        self.Downloadfolder = Downloadfolder
 
     async def start(self):
 
@@ -22,26 +23,26 @@ class TgDown:
         else:
             userid = self.event.sender_id
             try:
-                files_before = listdir(downloadFolder)
+                files_before = listdir(self.Downloadfolder)
                 self.msg = await self.bot.edit_message(self.process_msg, starting_to_download, parse_mode = 'html')
                 global t1
                 t1 = time()
                 #Trying to Download File to Server
-                await self.bot.download_media(self.message_info, file = downloadFolder)
+                await self.bot.download_media(self.message_info, file = self.Downloadfolder)
             except Exception as e:  #Downlading Failed
                 task("No Task")
                 await self.bot.delete_messages(None, self.msg)
                 await self.bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
                 await self.bot.send_message(dev, f'In tgDL.py {line_number()} {e}')
-                files_after = listdir(downloadFolder)
+                files_after = listdir(self.Downloadfolder)
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:
                     pass
                 else:
-                    remove(f'{downloadFolder}{filename}')
+                    rmtree(self.Downloadfolder)
             else:
-                files_after = listdir(downloadFolder)
+                files_after = listdir(self.Downloadfolder)
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:  #Dowloading Failed

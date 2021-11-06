@@ -141,6 +141,8 @@ async def upload_handler(event):
                 await event.respond(not_loggin, parse_mode = 'html')
     return None
 
+
+""""For Parallel Uploading"""
 class Multitask:
 
     def __init__(self, bot, event, log_obj, message_info, userid):

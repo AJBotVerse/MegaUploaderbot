@@ -11,18 +11,19 @@ from plugins.downloader.downloadingData import *
 
 class UrlDown:
 
-    def __init__(self, event, process_msg, bot, url):
+    def __init__(self, event, process_msg, bot, url, Downloadfolder):
         self.bot = bot
         self.process_msg = process_msg
         self.event = event
         self.url = url
+        self.Downloadfolder = Downloadfolder
 
     async def start(self):
         len_file = await length_of_file(self.bot, self.url)
         if len_file == 'Valid':
             msg = await self.bot.edit_message(self.process_msg, starting_to_download, parse_mode = 'html')
             userid = self.event.sender_id
-            downObj = SmartDL(self.url, dest = downloadFolder)
+            downObj = SmartDL(self.url, dest = self.Downloadfolder)
             downObj.start(blocking = False)
             while not downObj.isFinished():
                 progress_bar = downObj.get_progress_bar().replace('#', '■').replace('-', '□')
@@ -43,7 +44,7 @@ class UrlDown:
             else:
                 task("No Task")
                 try:
-                    remove(f'{downloadFolder}{filename}')
+                    rmtree(self.Downloadfolder)
                 except Exception as e:
                     await self.bot.send_message(dev, f'In urlDL.py {line_number()} {e}')
                     await self.bot.delete_messages(None, msg)
