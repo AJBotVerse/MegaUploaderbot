@@ -1,0 +1,6 @@
+pyrogram
+tgcrypto
+dnspython
+pymongo
+requests
+pySmartDL
