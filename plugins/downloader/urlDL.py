@@ -39,10 +39,10 @@ class UrlDown:
                 await self.bot.send_message(dev, f'In urlDL.py {line_number()} {e}')
             if downObj.isSuccessful():
                 n_msg = await self.bot.edit_message(msg, uploading_msg, parse_mode = 'html')
-                self.n_msg, self.filename = n_msg, filename
+                self.n_msg = n_msg
+                self.filename = filename
                 return True
             else:
-                task("No Task")
                 try:
                     rmtree(self.Downloadfolder)
                 except Exception as e:

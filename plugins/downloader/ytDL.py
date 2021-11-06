@@ -46,10 +46,8 @@ class YTDown:
             self.yt = YouTube(self.url, on_progress_callback = progress_function)
             self.qualities = self.yt.streams.filter(progressive = True)   #Filtering Streams Having Audio & Video
         except exceptions.VideoUnavailable: #Video not found
-            task("No Task")
             await self.bot.edit_message(self.process_msg, ytVideoUnavailable, parse_mode = 'html')
         except Exception as e:
-            task("No Task")
             await self.bot.send_message(dev, f'In ytDL.py {line_number()} {e}')
             await self.bot.edit_message(self.process_msg, unsuccessful_upload, parse_mode = 'html')
         else:
@@ -84,7 +82,6 @@ class YTDown:
                         t1 = time()
                         stream.download(output_path = self.Downloadfolder)
                     except Exception as e:
-                        task("No Task")
                         files_after = listdir(self.Downloadfolder)
                         await self.bot.send_message(dev, f'In ytDL.py {line_number()} {e}')
                         await self.bot.edit_message(self.msg, unsuccessful_upload, parse_mode = 'html')
@@ -101,7 +98,6 @@ class YTDown:
                             videoFile = str([i for i in files_after if i not in files_before][0])
                         except IndexError:
                             #File Not Downloaded
-                            task("No Task")
                             await self.bot.edit_message(self.msg, unsuccessful_upload, parse_mode = 'html')
                         else:
                             #File Downloaded Successfully to Server

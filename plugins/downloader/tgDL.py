@@ -30,7 +30,6 @@ class TgDown:
                 #Trying to Download File to Server
                 await self.bot.download_media(self.message_info, file = self.Downloadfolder)
             except Exception as e:  #Downlading Failed
-                task("No Task")
                 await self.bot.delete_messages(None, self.msg)
                 await self.bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
                 await self.bot.send_message(dev, f'In tgDL.py {line_number()} {e}')
@@ -46,7 +45,6 @@ class TgDown:
                 try:
                     filename = str([i for i in files_after if i not in files_before][0])
                 except IndexError:  #Dowloading Failed
-                    task("No Task")
                     await self.bot.delete_messages(None, self.msg)
                     await self.bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
                 else:   #File Downloaded Successfully

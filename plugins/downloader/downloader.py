@@ -41,15 +41,15 @@ class Downloader:
         return self
 
     #Downloading Youtube Video
-    async def youtube_downloader(self, process_msg, bot, url, log_object):
-        ytDl = YTDown(self.event, process_msg, bot, url, log_object)
+    async def youtube_downloader(self, process_msg, bot, url, log_object, Downloadfolder):
+        ytDl = YTDown(self.event, process_msg, bot, url, log_object, Downloadfolder)
         await ytDl.start()
         self.filename = None
         return
 
     #Downloading From url
-    async def url_downloader(self, event, process_msg, bot, url):
-        urlDl = UrlDown(event, process_msg, bot, url)
+    async def url_downloader(self, event, process_msg, bot, url, Downloadfolder):
+        urlDl = UrlDown(event, process_msg, bot, url, Downloadfolder)
         await urlDl.start()
         if urlDl.filename:
             self.filename = urlDl.filename
@@ -60,8 +60,8 @@ class Downloader:
 
 
     #Downloading From Telegram File/Media
-    async def file_downloader(self, event, process_msg, bot, message_info):
-        tgDl = TgDown(message_info, process_msg, bot, event)
+    async def file_downloader(self, event, process_msg, bot, message_info, Downloadfolder):
+        tgDl = TgDown(message_info, process_msg, bot, event, Downloadfolder)
         await tgDl.start()
         if tgDl.filename:
             self.filename = tgDl.filename

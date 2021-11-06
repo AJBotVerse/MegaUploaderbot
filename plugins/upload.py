@@ -9,7 +9,7 @@
 from shutil import rmtree
 
 # Importing Credentials & Developer defined modules
-from plugins.helper import line_number, task
+from plugins.helper import line_number
 from bot.botMessages import successful_uploaded, uploading_unsuccessful, dev
 
 
@@ -26,23 +26,23 @@ class Upload:
         self.Downloadfolder = Downloadfolder
     
     #Uploading File
-    async def start(self, bot, msg, userid):
+    async def start(self):
         mlog = self.login
-        self.filePath = f'{self.Downloadfolder}{self.filename}'
+        # self.filePath = f'{self.Downloadfolder}\\{self.filename}'
+        self.filePath = f'{self.Downloadfolder}/{self.filename}'
         try:    #Trying To Upload the File
             mlog.upload(self.filePath)
         except Exception as e:  #Not Uploaded
             self.result = False
             rmtree(self.Downloadfolder)
-            await bot.send_message(dev, f'In funcs.py {line_number()} {e}')
-            await bot.delete_messages(None, msg)
-            await bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
+            await self.bot.send_message(dev, f'In funcs.py {line_number()} {e}')
+            await self.bot.delete_messages(None, self.msg)
+            await self.bot.send_message(self.userid, uploading_unsuccessful, parse_mode = 'html')
         else:   #Successfully Uploaded
             rmtree(self.Downloadfolder)
-            await bot.delete_messages(None, msg)
-            await bot.send_message(userid, successful_uploaded, parse_mode = 'html')
+            await self.bot.delete_messages(None, self.msg)
+            await self.bot.send_message(self.userid, successful_uploaded, parse_mode = 'html')
         finally:
-            task("No Task")
             return
     
     

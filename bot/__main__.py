@@ -155,9 +155,12 @@ class Multitask:
     async def start(self):
         downloader = await Downloader.start(self.event, self.message_info, self.bot, self.log_obj)
         filename = downloader.filename
+        Downloadfolder = downloader.Downloadfolder
         if filename:    #Uploading File
             msg = downloader.n_msg
-            await Upload.start(filename, self.log_obj, bot, msg, self.userid)
+            self.Uploader = Upload(filename, self.log_obj, self.bot, msg, self.userid, Downloadfolder)
+            await self.Uploader.start()
+            return
 
 '''Bot is Started to run all time'''
 print('Bot is Started!')
