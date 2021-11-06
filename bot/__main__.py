@@ -27,6 +27,12 @@ basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s',level=W
 bot = TelegramClient('MegaUploader', api_id, api_hash).start(bot_token = bot_token)
 
 
+# Some Global Variable
+listTask = ['']
+global counter
+counter = 0
+
+
 ''''Defining Some Handlers for Bot'''
 #Start Handler
 @bot.on(events.NewMessage(pattern = r'/start$'))
@@ -125,22 +131,31 @@ async def upload_handler(event):
                 login_instance = Login(email, password)
                 if login_instance.result:
                     log_obj = login_instance.log
-                    if task() == "Running":
-                        await event.respond(task_ongoing, parse_mode = 'html')
-                    else:
-                        downloader = await Downloader.start(event, message_info, bot, log_obj)
-                        filename = downloader.filename
-
-                        if filename:    #Uploading File
-                            msg = downloader.n_msg
-                            await Upload.start(filename, log_obj, bot, msg, userid)
-                    task("No Task")
+                    global counter
+                    counter += 1
+                    listTask.append(Multitask(bot, event, log_obj, message_info, userid))
+                    bot.loop.create_task(listTask[counter].start())
                 else:   #Login Detail is Changed
                     await event.respond(login_detail_changed, parse_mode = 'html')
             else:   #Not Logged in
                 await event.respond(not_loggin, parse_mode = 'html')
     return None
 
+class Multitask:
+
+    def __init__(self, bot, event, log_obj, message_info, userid):
+        self.bot = bot
+        self.event = event
+        self.log_obj = log_obj
+        self.message_info = message_info
+        self.userid = userid
+
+    async def start(self):
+        downloader = await Downloader.start(self.event, self.message_info, self.bot, self.log_obj)
+        filename = downloader.filename
+        if filename:    #Uploading File
+            msg = downloader.n_msg
+            await Upload.start(filename, self.log_obj, bot, msg, self.userid)
 
 '''Bot is Started to run all time'''
 print('Bot is Started!')
