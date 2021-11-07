@@ -6,7 +6,7 @@ from pyrogram.errors import exceptions
 from betaBot.botModule.botMSG import BotMessage
 
 # Importing Required developer defined data
-from plugins.downloader.downloadingData import *
+from helper.downloader.downloadingData import *
 
 
 class TgDown:
