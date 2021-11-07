@@ -2,7 +2,8 @@
 
 
 """Importing"""
-from telethon.errors import rpcerrorlist
+from pyrogram.errors import exceptions
+from betaBot.botModule.botMSG import BotMessage
 
 # Importing Required developer defined data
 from plugins.downloader.downloadingData import *
@@ -10,69 +11,45 @@ from plugins.downloader.downloadingData import *
 
 class TgDown:
 
-    def __init__(self, message_info, process_msg, bot, event, Downloadfolder):
-        self.event = event
+    def __init__(self, bot, msg, process_msg, Downloadfolder):
+        self.msg = msg
         self.bot = bot
-        self.message_info = message_info
         self.process_msg = process_msg
         self.Downloadfolder = Downloadfolder
 
     async def start(self):
         
-        async def editProgressMsg(btyes, total):
-            
-            completedFloat = (btyes/1024)/1024
+        async def __editProgressMsg(current, total):
+            completedFloat = (current/1024)/1024
             completed = int(completedFloat)
-            current = btyes/total
-            progress = int(18*current)
+            stream = current/total
+            progress = int(18*stream)
             progress_bar = '■' * progress + '□' * (18 - progress)
-            percentage = int((current)*100)
+            percentage = int((stream)*100)
             speed = round((completedFloat/(time() - t1)), 1)
             if speed == 0:
                 speed = 0.1
-            remaining = int((((total - btyes)/1024)/1024)/speed)
+            remaining = int((((total - current)/1024)/1024)/speed)
+            
             try:
-                self.msg = await self.bot.edit_message(self.msg, f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
-            except rpcerrorlist.MessageNotModifiedError:
+                self.process_msg = await self.process_msg.edit_text(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
+            except exceptions.bad_request_400.MessageNotModified:
                 pass
             finally:
                 sleep(1)
 
-        def progressBar(bytes, total):
-            self.bot.loop.create_task(editProgressMsg(bytes, total))   
+        def __progressBar(current, total):
+            self.bot.loop.create_task(__editProgressMsg(current, total))   
 
-        size_of_file = self.message_info.file.size/1024  #Getting Size of File
-        if int(self.message_info.file.size) >= 419430400:    #File Size is more than Limit
-            await self.bot.edit_message(self.process_msg, f'This filesize is {size_of_file}mb. {file_limit}', parse_mode = 'html')
+        global t1
+        t1 = time()
+        self.filename = self.msg.download(progress = __progressBar)
+        if self.filename:
+            self.n_msg = self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
+            return True
         else:
-            userid = self.event.sender_id
-            try:
-                files_before = listdir(self.Downloadfolder)
-                self.msg = await self.bot.edit_message(self.process_msg, starting_to_download, parse_mode = 'html')
-                global t1
-                t1 = time()
-                #Trying to Download File to Server
-                await self.bot.download_media(self.message_info, file = self.Downloadfolder, progress_callback = progressBar)
-            except Exception as e:  #Downlading Failed
-                await self.bot.delete_messages(None, self.msg)
-                await self.bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
-                await self.bot.send_message(dev, f'In tgDL.py {line_number()} {e}')
-                files_after = listdir(self.Downloadfolder)
-                try:
-                    filename = str([i for i in files_after if i not in files_before][0])
-                except IndexError:
-                    pass
-                else:
-                    rmtree(self.Downloadfolder)
-            else:
-                files_after = listdir(self.Downloadfolder)
-                try:
-                    filename = str([i for i in files_after if i not in files_before][0])
-                except IndexError:  #Dowloading Failed
-                    await self.bot.delete_messages(None, self.msg)
-                    await self.bot.send_message(userid, uploading_unsuccessful, parse_mode = 'html')
-                else:   #File Downloaded Successfully
-                    n_msg = await self.bot.edit_message(self.msg, uploading_msg, parse_mode = 'html')
-                    self.n_msg, self.filename = n_msg, filename
-                    return True
+            rmtree(self.Downloadfolder)
+            await self.process_msg.delete()
+            await self.msg.reply_text(BotMessage.uploading_unsuccessful, parse_mode = 'html')
+            return
 
