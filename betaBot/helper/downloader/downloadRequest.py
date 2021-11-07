@@ -4,6 +4,7 @@
 """Importing"""
 # Importing Inbuilt packages
 from re import match
+from shutil import rmtree
 from uuid import uuid4
 from os import makedirs
 
@@ -11,7 +12,6 @@ from os import makedirs
 from helper.downloader.urlDL import UrlDown
 from helper.downloader.tgDL import TgDown
 from helper.downloader.ytDL import YTDown
-from plugins.helper import *
 from botModule.botMSG import BotMessage
 
 
@@ -48,7 +48,8 @@ class Downloader:
 
     #Downloading Youtube Video
     async def youtube_downloader(self):
-        ytDl = YTDown(self.bot, self.msg, self.process_msg, self.Downloadfolder, self.url, self.log_obj)
+        rmtree(self.Downloadfolder, ignore_errors = True)
+        ytDl = YTDown(self.bot, self.msg, self.process_msg, self.url, self.log_obj)
         await ytDl.start()
         self.filename = None
         return
@@ -75,4 +76,3 @@ class Downloader:
             return
         return
 
-        

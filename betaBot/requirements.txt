@@ -4,3 +4,5 @@ dnspython
 pymongo
 requests
 pySmartDL
+pytube
+ffmpeg-python

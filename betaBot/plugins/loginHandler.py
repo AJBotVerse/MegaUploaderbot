@@ -10,7 +10,7 @@ from helper.login import *
 
 #Accepting Login details
 @Client.on_message(filters.regex(r'\w+\@\w+\.[a-zA-Z]+\,(.+)'))
-async def verify_login_detail(msg:Message, bot:Update):
+async def verify_login_detail(bot:Update, msg:Message):
     if await search_user_in_community(bot, msg):
         userid = msg.chat.id
 
@@ -26,12 +26,18 @@ async def verify_login_detail(msg:Message, bot:Update):
             #Verifying Login detail
             login_object = Login(email, password)
             if login_object.result:
-                await log_msg.edit_text(BotMessage.logged_in , parse_mode= 'html')
+                try:
+                    await log_msg.edit_text(BotMessage.logged_in , parse_mode= 'html')
+                except exceptions.bad_request_400.MessageNotModified:
+                    pass
 
                 #Adding Login Detail To Database
                 adding_login_detail_to_database(userid, email, password)
             else:
-                await log_msg.edit_text(BotMessage.invalid_login , parse_mode= 'html')
+                try:
+                    await log_msg.edit_text(BotMessage.invalid_login , parse_mode= 'html')
+                except exceptions.bad_request_400.MessageNotModified:
+                    pass
         else:
             await msg.reply_text(BotMessage.already_login, parse_mode = 'html')
     return None

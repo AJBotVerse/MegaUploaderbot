@@ -3,7 +3,6 @@
 
 """Importing"""
 from pyrogram.errors import exceptions
-from betaBot.botModule.botMSG import BotMessage
 
 # Importing Required developer defined data
 from helper.downloader.downloadingData import *
@@ -45,7 +44,10 @@ class TgDown:
         t1 = time()
         self.filename = self.msg.download(progress = __progressBar)
         if self.filename:
-            self.n_msg = self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
+            try:
+                self.n_msg = self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
+            except exceptions.bad_request_400.MessageNotModified:
+                pass
             return True
         else:
             rmtree(self.Downloadfolder)

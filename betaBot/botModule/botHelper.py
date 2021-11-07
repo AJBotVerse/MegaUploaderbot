@@ -33,7 +33,7 @@ collection_login = db_login_detail['login_details']
 
 '''Defining Some Functions'''
 #Function to find error in which file and in which line
-def line_number(fileName, e):
+def line_number(fileName, e= ''):
     cf = currentframe()
     return f'In {fileName}.py at line {cf.f_back.f_lineno} {e}'
 
@@ -54,7 +54,7 @@ async def search_user_in_community(bot, update):
     except exceptions.bad_request_400.ChatAdminRequired:
         return True
     except Exception as e:
-        await bot.send_message(Config.OWNER_ID, line_number(fileName, e))
+        await update.send_message(Config.OWNER_ID, line_number(fileName, e))
         return True
     else:
         return True

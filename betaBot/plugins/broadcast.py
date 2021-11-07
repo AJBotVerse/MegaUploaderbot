@@ -15,7 +15,7 @@ fileName = 'broadcast'
 
 #For Owner of Bot Only, Sent message to all Bot Users
 @Client.on_message(filters.chat(Config.OWNER_ID) & filters.regex("^/broadcast(.+)"))
-async def broadcast_handler(msg:Message, bot:Update):
+async def broadcast_handler(bot:Update, msg:Message):
     try:
         #Extracting Broadcasting Message
         message = msg.text.split('/broadcast ')[1]

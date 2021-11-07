@@ -6,7 +6,7 @@
 '''Some Modules & Library'''
 from mega import *
 from mega.errors import RequestError
-from plugins.helper import line_number
+from botModule.botHelper import line_number
 
 
 '''Login Class'''

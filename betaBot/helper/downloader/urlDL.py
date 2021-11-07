@@ -5,7 +5,6 @@
 # Importing External Packages
 from pySmartDL import SmartDL
 from pyrogram.errors import exceptions
-from betaBot.botModule.botMSG import BotMessage
 
 # Importing Required developer defined data
 from helper.downloader.downloadingData import *
@@ -23,7 +22,11 @@ class UrlDown:
     async def start(self):
         len_file = await length_of_file(self.bot, self.url)
         if len_file == 'Valid':
-            self.process_msg = await self.process_msg.edit_text(BotMessage.starting_to_download, parse_mode = 'html')
+            try:
+                self.process_msg = await self.process_msg.edit_text(BotMessage.starting_to_download, parse_mode = 'html')
+            except exceptions.bad_request_400.MessageNotModified:
+                pass
+            
             userid = self.event.sender_id
             downObj = SmartDL(self.url, dest = self.Downloadfolder)
             downObj.start(blocking = False)
@@ -43,7 +46,10 @@ class UrlDown:
                     sleep(1)
             
             if downObj.isSuccessful():
-                n_msg = await self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
+                try:
+                    n_msg = await self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
+                except exceptions.bad_request_400.MessageNotModified:
+                    pass
                 self.n_msg = n_msg
                 self.filename = path.basename(downObj.get_dest())
                 return True
@@ -51,7 +57,6 @@ class UrlDown:
                 try:
                     rmtree(self.Downloadfolder)
                 except Exception as e:
-                    await self.bot.send_message(OwnerID, f'In urlDL.py {line_number()} {e}')
                     await self.process_msg.delete()
                     await self.msg.reply_text(BotMessage.unsuccessful_upload, parse_mode = 'html')
                     for e in downObj.get_errors():
@@ -60,7 +65,13 @@ class UrlDown:
                     await self.bot.send_message(OwnerID, f'In urlDL.py {line_number()}\n\n{self.url}')
 
         elif len_file == 'Not Valid':
-            await self.process_msg.edit_text(BotMessage.unsuccessful_upload, parse_mode = 'html')
+            try:
+                await self.process_msg.edit_text(BotMessage.unsuccessful_upload, parse_mode = 'html')
+            except exceptions.bad_request_400.MessageNotModified:
+                pass
         else:
-            await self.process_msg.edit_text(f'This filesize is **{len_file}mb**. {BotMessage.file_limit}', parse_mode = 'html')
+            try:
+                await self.process_msg.edit_text(f'This filesize is **{len_file}mb**. {BotMessage.file_limit}', parse_mode = 'html')
+            except exceptions.bad_request_400.MessageNotModified:
+                pass
         self.filename = None

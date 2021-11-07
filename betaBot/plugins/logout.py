@@ -8,7 +8,7 @@ from botModule.importCommon import *
 
 #Logout Handler
 @Client.on_message(filters.private & filters.command("revoke"))
-async def revoke_handler(msg:Message, bot:Update):
+async def revoke_handler(bot:Update, msg:Message):
     userid = msg.chat.id
     
     #Checking Whether User is Login or not 
