@@ -25,6 +25,8 @@ from helper.login import *
 listTask = ['']
 global counter
 counter = 0
+fileName = 'callbackYTDL'
+
 
 @Client.on_callback_query()
 async def Youtube_Video_CallBack(bot:Update, callback_query:CallbackQuery):
@@ -117,7 +119,7 @@ class YTDownloadCallback:
         
     async def errorMsg(self, e = ''):
 
-        await self.bot.send_message(Config.OWNER_ID, f'{line_number(fileName)}\n{e}\n\n{self.url}')
+        await self.bot.send_message(Config.OWNER_ID, f'{line_number(fileName, e)}\n\n{self.url}')
         await self.callback.edit_message_text(BotMessage.unsuccessful_upload, parse_mode = 'html')
         rmtree(self.Downloadfolder, ignore_errors = True)
         return

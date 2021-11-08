@@ -1,8 +1,0 @@
-pyrogram
-tgcrypto
-dnspython
-pymongo
-requests
-pySmartDL
-pytube
-ffmpeg-python

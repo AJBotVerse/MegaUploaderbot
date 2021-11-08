@@ -10,6 +10,9 @@ from pyrogram.errors import exceptions
 from helper.downloader.downloadingData import *
 
 
+fileName = 'urlDL'
+
+
 class UrlDown:
 
     def __init__(self, bot, msg, process_msg, Downloadfolder, url):
@@ -59,9 +62,9 @@ class UrlDown:
                     await self.process_msg.delete()
                     await self.msg.reply_text(BotMessage.unsuccessful_upload, parse_mode = 'html')
                     for e in downObj.get_errors():
-                        await self.bot.send_message(OwnerID, f'In urlDL.py {line_number()} {str(e)}\n\n{self.url}')
+                        await self.bot.send_message(OwnerID, f'{line_number(fileName, e)}\n\n{self.url}')
                 else:
-                    await self.bot.send_message(OwnerID, f'In urlDL.py {line_number()}\n\n{self.url}')
+                    await self.bot.send_message(OwnerID, f'{line_number(fileName)}\n\n{self.url}')
 
         elif len_file == 'Not Valid':
             try:

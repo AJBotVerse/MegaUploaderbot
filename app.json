@@ -6,12 +6,13 @@
         "bot",
         "heroku",
         "python",
-        "telethon",
+        "pyrogram",
         "app.json",
         "app",
         "mega",
         "mega.nz",
-        "uploader"
+        "uploader",
+        "youtube"
     ],
     "repository" : "https://github.com/AJTimePyro/MegaUploaderbot",
     "success_url" : "https://t.me/MegaDriveUploaderBot",
@@ -25,8 +26,11 @@
         "API_HASH" : {
             "description" : "Get From https://my.telegram.org"
         },
-        "MONGO_CON_STRING" : {
+        "MONGO_STR" : {
             "description" : "Get From MongoDB Atlas."
+        },
+        "OWNER_ID" : {
+            "description" : "Your Telegram User ID"
         }
     },
     "stack" : "heroku-20",

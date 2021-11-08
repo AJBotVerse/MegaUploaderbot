@@ -19,7 +19,9 @@ except ModuleNotFoundError:
     from config import Config
 
 
-fileName = 'uploader.py'
+fileName = 'uploader'
+
+
 '''Creating Class For Uploading The File'''
 class Upload:
 
@@ -44,7 +46,7 @@ class Upload:
             print(e)
             self.result = False
             rmtree(self.Downloadfolder, ignore_errors = True)
-            await self.bot.send_message(Config.OWNER_ID, f'{line_number(fileName)}\n{e}\n\n')
+            await self.bot.send_message(Config.OWNER_ID, f'{line_number(fileName, e)}')
             await self.msg.delete()
             await self.bot.send_message(self.userid, BotMessage.uploading_unsuccessful, parse_mode = 'html')
         else:   #Successfully Uploaded

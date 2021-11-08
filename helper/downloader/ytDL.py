@@ -3,12 +3,16 @@
 
 """Importing"""
 # Importing External Packages
+import asyncio
 from pytube import YouTube, exceptions
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 # Importing Required developer defined data
 from helper.uploader import *
 from helper.downloader.downloadingData import *
+
+
+fileName = 'ytDL'
 
 
 class YTDown:
@@ -28,7 +32,7 @@ class YTDown:
         except exceptions.VideoUnavailable:
             await self.process_msg.edit_text(BotMessage.ytVideoUnavailable, parse_mode = 'html')
         except Exception as e:
-            await self.bot.send_message(OwnerID, f'In ytDL.py {line_number()}\n{e}\n\n{self.url}')
+            await self.bot.send_message(OwnerID, f'{line_number(fileName, e)}\n\n{self.url}')
             await self.process_msg.edit_text(BotMessage.unsuccessful_upload, parse_mode = 'html')
         else:
             #Creating Buttons for Selecting Quality
@@ -48,7 +52,9 @@ class YTDown:
                         quality_button.append(twoButton)
                         twoButton = []
             if quality_button:
-                await self.process_msg.edit_text(BotMessage.choose_quality, parse_mode = 'html', reply_markup=InlineKeyboardMarkup(quality_button))
+                self.selectMSG = await self.process_msg.edit_text(BotMessage.choose_quality, parse_mode = 'html', reply_markup = InlineKeyboardMarkup(quality_button))
+                asyncio.sleep(60)
+                self.selectMSG.delete()
             else:
                 await self.process_msg.edit_text(BotMessage.all_above_limit, parse_mode = 'html')
         finally:
