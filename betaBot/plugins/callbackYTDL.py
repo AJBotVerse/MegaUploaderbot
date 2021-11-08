@@ -46,15 +46,13 @@ class YTDownloadCallback:
         self.itag = itag
         self.url = url
         self.bot = bot
-        self.log_obj = self.getLogin()
 
-        if self.log_obj:
-            self.slash = '//' if '/'in Config.DOWNLOAD_LOCATION else '\\'
-            self.Downloadfolder = Config.DOWNLOAD_LOCATION + self.slash + str(uuid4())
-            self.videoFolder = f'{self.Downloadfolder}{self.slash}video'
-            self.audioFolder = f'{self.Downloadfolder}{self.slash}audio'
+        self.slash = '//' if '/'in Config.DOWNLOAD_LOCATION else '\\'
+        self.Downloadfolder = Config.DOWNLOAD_LOCATION + self.slash + str(uuid4())
+        self.videoFolder = f'{self.Downloadfolder}{self.slash}video'
+        self.audioFolder = f'{self.Downloadfolder}{self.slash}audio'
 
-            self.__creatingFolder()
+        self.__creatingFolder()
         return
 
     def __creatingFolder(self):
@@ -64,33 +62,37 @@ class YTDownloadCallback:
 
     async def start(self):
 
-        if self.log_obj:
-            async def edit_msg(progress_bar, percentage, completed, speed, remaining):
-                try:
-                    self.msg = await self.msg.edit_text(f"<b>Downloading... !! Keep patience...\n [ {progress_bar}]\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
-                except exceptions.bad_request_400.MessageNotModified:
-                    pass
+        self.log_obj = await self.getLogin()
 
-            # Progress bar function
-            def progressBar(stream, _chunk, bytes_remaining):
-                filesize = stream.filesize
-                completed = round(((filesize - bytes_remaining)/1024)/1024, 1)
-                current = (stream.filesize - bytes_remaining)/stream.filesize
-                percentage = int(current*100)
-                progress = int(18*current)
-                progress_bar = '■' * progress + '□' * (18 - progress)
-                time_taken = int(time()) - t1
-                speed = round(completed/time_taken, 2)
-                if speed == 0:
-                    speed = 0.1
-                remaining = int(((bytes_remaining/1024)/1024)/speed)
+        if self.log_obj:
+            # async def edit_msg(progress_bar, percentage, completed, speed, remaining):
+            #     try:
+            #         self.msg = await self.msg.edit_text(f"<b>Downloading... !! Keep patience...\n [ {progress_bar}]\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
+            #     except exceptions.bad_request_400.MessageNotModified:
+            #         pass
+            #     except exceptions.bad_request_400.MessageIdInvalid:
+            #         pass
+
+            # # Progress bar function
+            # def progressBar(stream, _chunk, bytes_remaining):
+            #     filesize = stream.filesize
+            #     completed = round(((filesize - bytes_remaining)/1024)/1024, 1)
+            #     current = (stream.filesize - bytes_remaining)/stream.filesize
+            #     percentage = int(current*100)
+            #     progress = int(18*current)
+            #     progress_bar = '■' * progress + '□' * (18 - progress)
+            #     time_taken = int(time()) - t1
+            #     speed = round(completed/time_taken, 2)
+            #     if speed == 0:
+            #         speed = 0.1
+            #     remaining = int(((bytes_remaining/1024)/1024)/speed)
                 
-                self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
+            #     self.bot.loop.create_task(edit_msg(progress_bar, percentage, completed, speed, remaining))
 
             self.msg = await self.callback.edit_message_text(BotMessage.starting_to_download, parse_mode = 'html')
             try:
-                self.yt = YouTube(self.url, on_progress_callback = progressBar)
-                # yt = YouTube(self.url)
+                # self.yt = YouTube(self.url, on_progress_callback = progressBar)
+                yt = YouTube(self.url)
                 stream = self.yt.streams.get_by_itag(self.itag)
                 t1 = time()
                 self.videoFilepath = stream.download(output_path = self.videoFolder)
@@ -110,6 +112,7 @@ class YTDownloadCallback:
             finally:
                 return
         else:
+            rmtree(self.Downloadfolder, ignore_errors = True)
             return
         
     async def errorMsg(self, e = ''):

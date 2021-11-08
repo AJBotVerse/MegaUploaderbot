@@ -76,7 +76,7 @@ def getting_email_pass(userid):
         return None
 
 #it will check the length of file
-async def length_of_file(bot, url, userid):
+async def length_of_file(bot, url):
     try:
         h = head(url, allow_redirects=True)
         header = h.headers

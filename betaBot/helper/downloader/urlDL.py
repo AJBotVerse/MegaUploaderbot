@@ -27,7 +27,6 @@ class UrlDown:
             except exceptions.bad_request_400.MessageNotModified:
                 pass
             
-            userid = self.event.sender_id
             downObj = SmartDL(self.url, dest = self.Downloadfolder)
             downObj.start(blocking = False)
 
@@ -39,7 +38,7 @@ class UrlDown:
                 percentage = int(downObj.get_progress()*100)
 
                 try:
-                    self.process_msg = await self.process_msg.edit_text(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
+                    self.process_msg = await self.process_msg.edit_text(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed}\n🚀Speed: {speed}\n⌚️Remaining Time: {remaining}</b>", parse_mode = 'html')
                 except exceptions.bad_request_400.MessageNotModified:
                     pass
                 finally:
