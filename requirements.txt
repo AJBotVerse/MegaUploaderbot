@@ -6,4 +6,5 @@ requests
 pySmartDL
 pytube
 ffmpeg-python
-pycrypto
+pycryptodome
+tenacity
