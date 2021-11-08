@@ -8,3 +8,4 @@ pytube
 ffmpeg-python
 pycryptodome
 tenacity
+pathlib
