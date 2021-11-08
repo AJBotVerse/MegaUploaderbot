@@ -94,7 +94,7 @@ class YTDownloadCallback:
             self.msg = await self.callback.edit_message_text(BotMessage.starting_to_download, parse_mode = 'html')
             try:
                 # self.yt = YouTube(self.url, on_progress_callback = progressBar)
-                yt = YouTube(self.url)
+                self.yt = YouTube(self.url)
                 stream = self.yt.streams.get_by_itag(self.itag)
                 t1 = time()
                 self.videoFilepath = stream.download(output_path = self.videoFolder)
@@ -139,32 +139,42 @@ class YTDownloadCallback:
 
     async def __downloadingAudio(self):
         try:
-            qualities = self.yt.streams.filter(only_audio = True, adaptive = True)
-            listAudio = {quality.abr[:-4] : quality.itag for quality in qualities}
-            sizeA = (int(i) for i in listAudio)
-            stream = self.yt.streams.get_by_itag(listAudio[f'{max(sizeA)}'])
-            self.audioFilepath = stream.download(output_path = self.audioFolder)
+            self.msg = await self.msg.edit_text(BotMessage.downloadingAudio, parse_mode = 'html')
         except Exception as e:
-            await self.errorMsg(e)
-        else:
-            if self.audioFilepath:
-                if await self.merge():
-                    return True
+            pass
+        finally:
+            try:
+                qualities = self.yt.streams.filter(only_audio = True, adaptive = True)
+                listAudio = {quality.abr[:-4] : quality.itag for quality in qualities}
+                sizeA = (int(i) for i in listAudio)
+                stream = self.yt.streams.get_by_itag(listAudio[f'{max(sizeA)}'])
+                self.audioFilepath = stream.download(output_path = self.audioFolder)
+            except Exception as e:
+                await self.errorMsg(e)
             else:
-                await self.errorMsg()
-        return
+                if self.audioFilepath:
+                    if await self.merge():
+                        return True
+                else:
+                    await self.errorMsg()
+            return
     
     async def merge(self):
         try:
-            inputVideo = input(self.videoFilepath)
-            inputAudio = input(self.audioFilepath)
-            concat(inputVideo, inputAudio, v = 1, a = 1).output(f'{self.Downloadfolder}{self.slash}{self.filename}').run()
+            self.msg = await self.msg.edit_text(BotMessage.merging, parse_mode = 'html')
         except Exception as e:
-            await self.errorMsg(e)
-            return
-        else:
-            return True
+            pass
         finally:
-            rmtree(self.videoFolder, ignore_errors = True)
-            rmtree(self.audioFolder, ignore_errors = True)
+            try:
+                inputVideo = input(self.videoFilepath)
+                inputAudio = input(self.audioFilepath)
+                concat(inputVideo, inputAudio, v = 1, a = 1).output(f'{self.Downloadfolder}{self.slash}{self.filename}').run()
+            except Exception as e:
+                await self.errorMsg(e)
+                return
+            else:
+                return True
+            finally:
+                rmtree(self.videoFolder, ignore_errors = True)
+                rmtree(self.audioFolder, ignore_errors = True)
 

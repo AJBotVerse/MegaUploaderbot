@@ -3,9 +3,11 @@
 
 """Importing"""
 # Importing External Packages
-import asyncio
 from pytube import YouTube, exceptions
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+# Importing Inbuilt Packages
+import asyncio
 
 # Importing Required developer defined data
 from helper.uploader import *
@@ -53,8 +55,8 @@ class YTDown:
                         twoButton = []
             if quality_button:
                 self.selectMSG = await self.process_msg.edit_text(BotMessage.choose_quality, parse_mode = 'html', reply_markup = InlineKeyboardMarkup(quality_button))
-                asyncio.sleep(60)
-                self.selectMSG.delete()
+                await asyncio.sleep(60)
+                await self.selectMSG.delete()
             else:
                 await self.process_msg.edit_text(BotMessage.all_above_limit, parse_mode = 'html')
         finally:
