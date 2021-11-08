@@ -16,10 +16,10 @@ except ModuleNotFoundError:
     from config import Config
 
 
-'''For Displaying Errors&Warnings Better'''
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
-logging.getLogger("pyrogram").setLevel(logging.WARNING)
+# '''For Displaying Errors&Warnings Better'''
+# logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logger = logging.getLogger(__name__)
+# logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 """Starting Bot"""
 if __name__ == "__main__" :
