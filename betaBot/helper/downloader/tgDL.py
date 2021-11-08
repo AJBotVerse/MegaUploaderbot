@@ -42,13 +42,15 @@ class TgDown:
 
         global t1
         t1 = time()
-        self.filename = self.msg.download(progress = __progressBar)
+        self.filename = await self.msg.download(file_name = self.Downloadfolder, progress = __progressBar)
         if self.filename:
+            self.filename = path.basename(self.filename)
             try:
-                self.n_msg = self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
+                self.n_msg = await self.process_msg.edit_text(BotMessage.uploading_msg, parse_mode = 'html')
             except exceptions.bad_request_400.MessageNotModified:
                 pass
-            return True
+            else:
+                return True
         else:
             rmtree(self.Downloadfolder)
             await self.process_msg.delete()

@@ -30,7 +30,7 @@ class Downloader:
         self.msg = msg
         self.log_obj = log_obj
         slash = '//' if '/'in Config.DOWNLOAD_LOCATION else '\\'
-        self.Downloadfolder = Config.DOWNLOAD_LOCATION + slash + str(uuid4())
+        self.Downloadfolder = Config.DOWNLOAD_LOCATION + slash + str(uuid4()) + slash
         makedirs(self.Downloadfolder)
     
     async def start(self):
@@ -60,7 +60,6 @@ class Downloader:
         await urlDl.start()
         self.filename = urlDl.filename
         if urlDl.filename:
-            self.filename = urlDl.filename
             self.n_msg = urlDl.n_msg
             return
         return
@@ -71,7 +70,6 @@ class Downloader:
         await tgDl.start()
         self.filename = tgDl.filename
         if self.filename:
-            self.filename = tgDl.filename
             self.n_msg = tgDl.n_msg
             return
         return

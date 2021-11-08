@@ -41,9 +41,10 @@ class Upload:
         try:    #Trying To Upload the File
             mlog.upload(self.filePath)
         except Exception as e:  #Not Uploaded
+            print(e)
             self.result = False
-            rmtree(self.Downloadfolder)
-            await self.bot.send_message(Config.OWNER_ID, f'{line_number(fileName)}\n{e}\n\n{self.url}')
+            rmtree(self.Downloadfolder, ignore_errors = True)
+            await self.bot.send_message(Config.OWNER_ID, f'{line_number(fileName)}\n{e}\n\n')
             await self.msg.delete()
             await self.bot.send_message(self.userid, BotMessage.uploading_unsuccessful, parse_mode = 'html')
         else:   #Successfully Uploaded
