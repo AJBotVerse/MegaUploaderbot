@@ -11,6 +11,7 @@ from random import randint
 from binascii import unhexlify
 from Crypto.PublicKey import RSA
 from Crypto.Util import Counter
+from pyrogram.errors.exceptions.bad_request_400 import ExpireDateInvalid
 from requests import post
 from tenacity import retry, wait_exponential, retry_if_exception_type
 from mega.crypto import *
@@ -339,9 +340,12 @@ class Mega:
                                                 timeout=self.timeout)
                     completion_file_handle = output_file.text
                     # Edit status message
-                    await uploadstatus_msg.edit(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
-                    logger.info('%s of %s uploaded', upload_progress,
-                                file_size)
+                    try:
+                        await uploadstatus_msg.edit(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
+                        logger.info('%s of %s uploaded', upload_progress,
+                                    file_size)
+                    except Exception as e:
+                        print(e)
             else:
                 output_file = post(ul_url + "/0",
                                             data='',
