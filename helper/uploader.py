@@ -7,6 +7,7 @@
 """Importing"""
 # Importing Inbuilt packages
 from shutil import rmtree
+from time import time
 
 # Importing Credentials & Developer defined modules
 from botModule.botHelper import line_number
@@ -41,7 +42,8 @@ class Upload:
         mlog = self.login
     
         try:    #Trying To Upload the File
-            mlog.upload(self.filePath)
+            t = time()
+            await mlog.upload(self.filePath, upstatusmsg = self.msg, initalTime = t)
         except Exception as e:  #Not Uploaded
             print(e)
             self.result = False

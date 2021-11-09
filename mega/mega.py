@@ -3,6 +3,7 @@
 
 from math import ceil
 from os import path
+from time import time
 from json import dumps, loads
 from hashlib import pbkdf2_hmac
 from logging import getLogger
@@ -24,7 +25,7 @@ class Mega:
         self.timeout = 160  # max secs to wait for resp from api requests
         self.sid = None
         self.sequence_num = randint(0, 0xFFFFFFFF)
-        self.request_id = make_id(10) # creates a random id of len 10
+        self.request_id = make_id(10)
         self._trash_folder_node_id = None
 
         if options is None:
@@ -32,15 +33,11 @@ class Mega:
         self.options = options
 
     def login(self, email=None, password=None):
-        if email:
-            self._login_user(email, password)
-        else:
-            self.login_anonymous()
+        self._login_user(email, password)
         self._trash_folder_node_id = self.get_node_by_type(4)[0]
         logger.info('Login complete')
         return self
-      
-      
+    
     def _login_user(self, email, password):
         logger.info('Logging in user...')
         email = email.lower()
@@ -65,7 +62,7 @@ class Mega:
         if isinstance(resp, int):
             raise RequestError(resp)
         self._login_process(resp, password_aes)
-    
+
     def _login_process(self, resp, password):
         encrypted_master_key = base64_to_a32(resp['k'])
         self.master_key = decrypt_key(encrypted_master_key, password)
@@ -117,7 +114,7 @@ class Mega:
             sid = '%x' % rsa_decrypter._decrypt(encrypted_sid)
             sid = unhexlify('0' + sid if len(sid) % 2 else sid)
             self.sid = base64_url_encode(sid[:43])
-        
+
     def get_node_by_type(self, type):
         """
         Get a node by it's numeric type id, e.g:
@@ -170,7 +167,7 @@ class Mega:
                 raise RuntimeError(msg)
             raise RequestError(int_resp)
         return json_resp[0]
-    
+
     def _init_shared_keys(self, files, shared_keys):
         """
         Init shared key not associated with a user.
@@ -190,7 +187,7 @@ class Mega:
             if s_item['h'] in ok_dict:
                 shared_keys[s_item['u']][s_item['h']] = ok_dict[s_item['h']]
         self.shared_keys = shared_keys
-
+    
     def _process_file(self, file, shared_keys):
         if file['t'] == 0 or file['t'] == 1:
             keys = dict(
@@ -251,7 +248,7 @@ class Mega:
             self.trashbin_id = file['h']
             file['a'] = {'n': 'Rubbish Bin'}
         return file
-
+    
     def get_files(self):
         logger.info('Getting all files...')
         files = self._api_request({'a': 'f', 'c': 1, 'r': 1})
@@ -264,14 +261,21 @@ class Mega:
             if processed_file['a']:
                 files_dict[file['h']] = processed_file
         return files_dict
-    
-    def upload(self, filename, dest=None, dest_filename=None):
+
+    async def upload(self, filename, initalTime, dest=None, dest_filename=None, upstatusmsg=None):
         # determine storage node
         if dest is None:
             # if none set, upload to cloud drive node
             if not hasattr(self, 'root_id'):
                 self.get_files()
             dest = self.root_id
+
+        # Upload Status message of Pyrogram Bot
+        if upstatusmsg is not None:
+            uploadstatus_msg = upstatusmsg
+        else:
+            print("\n\n Can't Get Upload Status Message! Returning... \n\n")
+            return
 
         # request upload url, call 'u' method
         with open(filename, 'rb') as input_file:
@@ -295,7 +299,21 @@ class Mega:
             if file_size > 0:
                 for chunk_start, chunk_size in get_chunks(file_size):
                     chunk = input_file.read(chunk_size)
+
                     upload_progress += len(chunk)
+
+                    completedFloat = (upload_progress/1024)/1024
+                    completed = int(completedFloat)
+                    stream = upload_progress/file_size
+                    progress = int(18*stream)
+                    progress_bar = '■' * progress + '□' * (18 - progress)
+                    percentage = int((stream)*100)
+                    speed = round((completedFloat/(time() - initalTime)), 1)
+                    if speed == 0:
+                        speed = 0.1
+                    remaining = int((((file_size - upload_progress)/1024)/1024)/speed)
+                    
+                    timeTaken = time() - initalTime
 
                     encryptor = AES.new(k_str, AES.MODE_CBC, iv_str)
                     for i in range(0, len(chunk) - 16, 16):
@@ -316,10 +334,12 @@ class Mega:
                     # encrypt file and upload
                     chunk = aes.encrypt(chunk)
                     output_file = post(ul_url + "/" +
-                                       str(chunk_start),
-                                       data=chunk,
-                                       timeout=self.timeout)
+                                                str(chunk_start),
+                                                data=chunk,
+                                                timeout=self.timeout)
                     completion_file_handle = output_file.text
+                    # Edit status message
+                    await uploadstatus_msg.edit(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
                     logger.info('%s of %s uploaded', upload_progress,
                                 file_size)
             else:
@@ -366,4 +386,3 @@ class Mega:
             logger.info('Upload complete')
             return data
 
-            
