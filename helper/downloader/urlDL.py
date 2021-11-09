@@ -73,7 +73,7 @@ class UrlDown:
                 pass
         else:
             try:
-                await self.process_msg.edit_text(f'This filesize is **{len_file}mb**. {BotMessage.file_limit}', parse_mode = 'html')
+                await self.process_msg.edit_text(f'Filesize Detected: <code>{len_file}MB</code>.\n{BotMessage.file_limit}', parse_mode = 'html')
             except exceptions.bad_request_400.MessageNotModified:
                 pass
         self.filename = None

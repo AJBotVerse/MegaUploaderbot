@@ -34,7 +34,7 @@ class BotMessage(object):
 
     login_detail_changed = f"Seems like your <b>login detail is changed.</b> /revoke this account, and add new login detail.{common_text}"
 
-    file_limit = f"Send only those whose size is less than 400mb.{common_text}"
+    file_limit = f"I can't Upload file that are larger than 2000MB.{common_text}"
 
     starting_to_download = "<code>Starting to Download🚀 the file on server.... Have Some Patience!!!</code>"
 

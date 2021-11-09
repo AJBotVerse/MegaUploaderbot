@@ -89,7 +89,7 @@ async def length_of_file(bot, url):
         return 'Not Valid'
     else:
         if content_length > 2097152000:  #File`s Size is more than Telegram Limit
-            return 'Telegram Limit'
+            return file_length
         return 'Valid'
         
         
