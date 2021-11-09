@@ -41,8 +41,9 @@ class Downloader:
             self.url = self.msg.text
             self.process_msg = await self.msg.reply_text(BotMessage.processing_url, parse_mode = 'html')
             if match('^https://(www.)?youtu(.)?be(.com)?/(.*)', self.url):   #For Youtube Video
-                # await self.msg.reply_text("Currently not supporting Youtube Videos.")
-                await self.youtube_downloader()
+                await self.msg.reply_text("Currently not supporting Youtube Videos.")
+                await self.process_msg.delete()
+                # await self.youtube_downloader()
             else:   #Normal Url
                 await self.url_downloader()
         return self
