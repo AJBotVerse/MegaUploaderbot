@@ -1,19 +1,21 @@
 #!/usr/bin/env python3
 
 
-"""Importing"""
+### Importing
 # Importing External Packages
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.errors import exceptions, UserNotParticipant
+from pyrogram.types import Update, Message
 from pymongo import MongoClient
-from requests import head
+from mega import *
+from mega.errors import RequestError
 
-# Importing Inbuilt Packages
-import __main__
-from inspect import currentframe
+# Importing inbuilt
+import string
+import random
+import time
 
 # Importing Credentials & Required Data
-from botModule.botMSG import BotMessage
 try:
     from testexp.config import Config
 except ModuleNotFoundError:
@@ -22,52 +24,81 @@ finally:
     mongoSTR = Config.MONGO_STR
 
 
-fileName = 'botHelper'
-
-
-'''Connecting To Database'''
+### Connecting To Database
 mongo_client = MongoClient(mongoSTR)
 db_login_detail = mongo_client['MegaUploader']
 collection_login = db_login_detail['login_details']
 
 
-'''Defining Some Functions'''
-#Function to find error in which file and in which line
-def line_number(fileName, e= ''):
-    cf = currentframe()
-    return f'In {fileName}.py at line {cf.f_back.f_lineno} {e}'
-
+### Defining some functions
 #Checking User whether he joined channel and group or not joined.
-async def search_user_in_community(bot, update):
+async def search_user_in_community(
+    bot : Update,
+    msg : Message
+    ):
     try:
-        userChannel = await bot.get_chat_member('@AJPyroVerse', update.chat.id)
-        userGroup = await bot.get_chat_member('@AJPyroVerseGroup', update.chat.id)
+        userChannel = await bot.get_chat_member(
+            '@AJPyroVerse',
+            msg.chat.id
+        )
+        userGroup = await bot.get_chat_member(
+            '@AJPyroVerseGroup',
+            msg.chat.id
+        )
         if "kicked" in (userGroup.status, userChannel.status):
-            await update.reply_text(BotMessage.userBanned, parse_mode = 'html')
+            await msg.reply_text("BotMessage.userBanned", parse_mode = 'html')
             return
     except UserNotParticipant:
-        await update.reply_text(BotMessage.not_joined_community, parse_mode = 'html',reply_markup=InlineKeyboardMarkup([
-        [InlineKeyboardButton('Join our Channel.',url = 'https://t.me/AJPyroVerse')],
-        [InlineKeyboardButton('Join our Group.',url = 'https://t.me/AJPyroVerseGroup')]
-        ]))
+        await msg.reply_text(
+            "BotMessage.not_joined_community",
+            parse_mode = 'html',
+            reply_markup = InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton(
+                            'Join our Channel.',
+                            url = 'https://t.me/AJPyroVerse'
+                        )
+                    ],
+                    [
+                        InlineKeyboardButton(
+                            'Join our Group.',
+                            url = 'https://t.me/AJPyroVerseGroup'
+                        )
+                    ]
+                ]
+            )
+        )
         return
     except exceptions.bad_request_400.ChatAdminRequired:
         return True
     except Exception as e:
-        await update.send_message(Config.OWNER_ID, line_number(fileName, e))
+        await bot.send_message(Config.OWNER_ID, "")
         return True
     else:
         return True
 
-#Adding Login Details To Database
-def adding_login_detail_to_database(userid, email, password):
-    collection_login.insert_one({
-        'userid' : userid,
-        'email' : email,
-        'password' : password
-    })
+def loginInstance(email, password, bot):
+    m = Mega()
+    try:
+        mlog = m.login(email, password)
+    except RequestError as e:
+        tmpCode = e.code
+        if tmpCode == -9:
+            print("Email or password is incorrect")
+        elif tmpCode == -2:
+            print("Email or Password is invalid")
+        else:
+            print("Something New")
+        print(e.message)
+        return tmpCode
+    except Exception as e:
+        bot.send_message(Config.OWNER_ID, f"{e}")
+        return None
+    else:
+        return mlog
 
-#Getting Email & Password From Database
+# Getting Email & Password From Database
 def getting_email_pass(userid):
     myresult  = collection_login.find_one({'userid' : userid})
     if myresult:
@@ -75,21 +106,29 @@ def getting_email_pass(userid):
     else:
         return None
 
-#it will check the length of file
-async def length_of_file(bot, url):
+def randomChar(size):
+    allchar = string.ascii_letters
+    char = ''
+    for i in range(size):
+        char += random.choice(allchar)
+    return char
+
+def editProgressMsg(current, total, pmsg, t1):
+    completedFloat = (current/1024)/1024
+    completed = int(completedFloat)
+    stream = current/total
+    progress = int(18*stream)
+    progress_bar = '■' * progress + '□' * (18 - progress)
+    percentage = int((stream)*100)
+    speed = round((completedFloat/(time.time() - t1)), 1)
+    if speed == 0:
+        speed = 0.1
+    remaining = int((((total - current)/1024)/1024)/speed)
+    
     try:
-        h = head(url, allow_redirects=True)
-        header = h.headers
-        content_length = int(header.get('content-length'))
-        file_length = int(content_length/1048576)     #Getting Length of File
-    except TypeError:
-        return 'Not Valid'
-    except Exception as e:  #File is not Exist in Given URL
-        await bot.send_message(Config.OWNER_ID, line_number(fileName, e))
-        return 'Not Valid'
-    else:
-        if content_length > 2097152000:  #File`s Size is more than Telegram Limit
-            return file_length
-        return 'Valid'
-        
-        
+        pmsg.edit_text(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
+    except exceptions.bad_request_400.MessageNotModified:
+        pass
+    finally:
+        time.sleep(3)
+

@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+
+### Importing
 from os import environ
 
 class Config(object):
