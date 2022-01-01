@@ -7,7 +7,7 @@ from botModule.importCom import *
 
 
 ### Log files Handler
-@Client.on_message(filters.private & filters.command("log"))
+@Client.on_message(filters.chat(Config.OWNER_ID) & filters.private & filters.command("log"))
 async def logHandler(bot:Update, msg:Message):
     try:
         await msg.reply_document('megauploader.log')
@@ -19,7 +19,7 @@ async def logHandler(bot:Update, msg:Message):
 
 
 ### Broadcast Handler
-@Client.on_message(filters.chat(Config.OWNER_ID) & filters.regex("^/broadcast(.+)"))
+@Client.on_message(filters.chat(Config.OWNER_ID) & filters.regex("^/broadcast"))
 async def broadcast_handler(bot:Update, msg:Message):
 
     MSG = msg.reply_to_message
