@@ -24,6 +24,11 @@ finally:
     mongoSTR = Config.MONGO_STR
 
 
+### Global Variable
+common_text = '\n\n<b><u>If you are facing any problem😫, so report📝 at @AJPyroVerseGroup</u></b>'
+to_login = '<b>If you are not logged in then, send login detail in this format email,password.</b>\n'
+
+
 ### Connecting To Database
 mongo_client = MongoClient(mongoSTR)
 db_login_detail = mongo_client['MegaUploader']
@@ -46,11 +51,14 @@ async def search_user_in_community(
             msg.chat.id
         )
         if "kicked" in (userGroup.status, userChannel.status):
-            await msg.reply_text("BotMessage.userBanned", parse_mode = 'html')
+            await msg.reply_text(
+                "<b>You are Banned🚫 from AJPyroVerse Community.\nContact @AJTimePyro (Owner of AJPyroVerse)</b>",
+                parse_mode = 'html'
+            )
             return
     except UserNotParticipant:
         await msg.reply_text(
-            "BotMessage.not_joined_community",
+            f"<b>To use this bot, you need to Join our channel and Group😁🤪.</b>{common_text}",
             parse_mode = 'html',
             reply_markup = InlineKeyboardMarkup(
                 [
@@ -93,7 +101,10 @@ def loginInstance(email, password, bot):
         print(e.message)
         return tmpCode
     except Exception as e:
-        bot.send_message(Config.OWNER_ID, f"{e}")
+        bot.send_message(
+            Config.OWNER_ID,
+            f"Something went Wrong While Login account.\n{e}"
+        )
         return None
     else:
         return mlog

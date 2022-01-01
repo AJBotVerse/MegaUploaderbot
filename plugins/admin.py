@@ -12,7 +12,10 @@ async def logHandler(bot:Update, msg:Message):
     try:
         await msg.reply_document('megauploader.log')
     except Exception as e:
-        print(e)
+        await msg.reply_text(
+            f"Something went wrong while sending log file.\n{e}",
+            parse_mode = 'html'
+        )
 
 
 ### Broadcast Handler
@@ -26,7 +29,7 @@ async def broadcast_handler(bot:Update, msg:Message):
             parse_mode = 'html'
         )
     m = await msg.reply_text(
-        "<>codeBroadcasting..</code>",
+        "<code>Broadcasting..</code>",
         parse_mode = 'html'
     )
     SUCE = 0

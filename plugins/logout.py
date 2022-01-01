@@ -20,10 +20,16 @@ async def revoke_handler(bot:Update, msg:Message):
         #Removing Login Detail from Database
         collection_login.delete_one(query)
 
-        await msg.reply_text("BotMessage.logged_out", parse_mode = 'html')
+        await msg.reply_text(
+            "Your account is now logged out🥺.\nTo Login again send your login detail.",
+            parse_mode = 'html'
+        )
     
     # If user not found in db
     else:
-        await msg.reply_text("BotMessage.revoke_failed", parse_mode = 'html')
+        await msg.reply_text(
+            f"<b><u>You are not even logged in😒. So how can I remove your account.</u></b>{common_text}",
+            parse_mode = 'html'
+        )
     return
 
