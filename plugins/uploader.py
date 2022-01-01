@@ -53,11 +53,11 @@ async def uploaderHandler(bot:Update, msg:Message):
                     try:
                         filepath = await msg.download(
                             file_name = downLoc,
-                            progress = editProgressMsg,
-                            progress_args = (
-                                pmsg,
-                                time.time()
-                            )
+                            # progress = editProgressMsg,
+                            # progress_args = (
+                            #     pmsg,
+                            #     time.time()
+                            # )
                         )
                     except Exception as e:
                         print(e)
