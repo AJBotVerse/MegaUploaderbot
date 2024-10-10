@@ -17,6 +17,11 @@ from tenacity import retry, wait_exponential, retry_if_exception_type
 from mega.crypto import *
 from mega.errors import *
 
+
+from pyrogram import enums
+parse_mode=enums.ParseMode.HTML
+
+
 logger = getLogger(__name__)
 
 class Mega:
@@ -343,7 +348,8 @@ class Mega:
                     try:
                         await uploadstatus_msg.edit_text(
                             f"<b>Uploading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>",
-                            parse_mode = 'html'
+                           #parse_mode = 'html'
+                            parse_mode
                         )
                         logger.info('%s of %s uploaded', upload_progress,
                                     file_size)
@@ -392,4 +398,3 @@ class Mega:
             })
             logger.info('Upload complete')
             return data
-
