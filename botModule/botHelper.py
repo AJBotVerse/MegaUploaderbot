@@ -9,6 +9,9 @@ from pyrogram.types import Update, Message
 from pymongo import MongoClient
 from mega import *
 from mega.errors import RequestError
+from pyrogram import enums
+
+parse_mode=enums.ParseMode.HTML
 
 # Importing inbuilt
 import string
@@ -43,7 +46,7 @@ async def search_user_in_community(
     ):
     try:
         userChannel = await bot.get_chat_member(
-            '@AJPyroVerse',
+            '@r00t_server',
             msg.chat.id
         )
         userGroup = await bot.get_chat_member(
@@ -53,13 +56,15 @@ async def search_user_in_community(
         if "kicked" in (userGroup.status, userChannel.status):
             await msg.reply_text(
                 "<b>You are Banned🚫 from AJPyroVerse Community.\nContact @AJTimePyro (Owner of AJPyroVerse)</b>",
-                parse_mode = 'html'
+                #parse_mode = 'html'
+                parse_mode
             )
             return
     except UserNotParticipant:
         await msg.reply_text(
             f"<b>To use this bot, you need to Join our channel and Group😁🤪.</b>{common_text}",
-            parse_mode = 'html',
+            #parse_mode = 'html',
+            parse_mode,
             reply_markup = InlineKeyboardMarkup(
                 [
                     [
@@ -81,7 +86,7 @@ async def search_user_in_community(
     except exceptions.bad_request_400.ChatAdminRequired:
         return True
     except Exception as e:
-        await bot.send_message(Config.OWNER_ID, "")
+        await bot.send_message(Config.OWNER_ID, "6995486906")
         return True
     else:
         return True
@@ -116,6 +121,26 @@ def getting_email_pass(userid):
         return myresult['email'], myresult['password']
     else:
         return None
+#!/usr/bin/env python3
+
+
+### Importing
+from os import environ
+
+class Config(object):
+    TG_BOT_TOKEN = environ.get("BOT_TOKEN", "") # Make a bot from https://t.me/BotFather and enter the token here
+    
+    APP_ID = int(environ.get("API_ID", 123456)) # Get this value from https://my.telegram.org/apps
+    
+    API_HASH = environ.get("API_HASH", "") # Get this value from https://my.telegram.org/apps
+    
+    OWNER_ID = int(environ.get("OWNER_ID", 6995486906)) # Your(owner's) telegram id
+    
+    MONGO_STR = environ.get("MONGO_STR", "") # Get from MongoDB Atlas
+
+    DOWNLOAD_LOCATION = "app//DOWNLOADS//" # The download location for users. (Don't change anything in this field!)
+
+    
 
 def randomChar(size):
     allchar = string.ascii_letters
@@ -137,7 +162,9 @@ def editProgressMsg(current, total, pmsg, t1):
     remaining = int((((total - current)/1024)/1024)/speed)
     
     try:
-        pmsg.edit_text(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>", parse_mode = 'html')
+        pmsg.edit_text(f"<b>Downloading... !! Keep patience...\n {progress_bar}\n📊Percentage: {percentage}%\n✅Completed: {completed} MB\n🚀Speed: {speed} MB/s\n⌚️Remaining Time: {remaining} seconds</b>",
+    #parse_mode = 'html'
+    parse_mode)
     except exceptions.bad_request_400.MessageNotModified:
         pass
     finally:
