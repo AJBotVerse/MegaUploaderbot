@@ -5,6 +5,7 @@
 # Importing Common Files
 from botModule.importCom import *
 
+parse_mode=enums.ParseMode.HTML
 
 ### Email & Password handler
 @Client.on_message(filters.private & filters.regex('[\w\.]+@[\w\.]+(\s*),(\s*)[\S]+'))
@@ -27,7 +28,8 @@ async def start_handler(bot:Update, msg:Message):
 
             log_msg = await msg.reply_text(
                 "<code>I am trying to login your account.\nSo Please Wait...</code>",
-                parse_mode = 'html'
+                #parse_mode = 'html' 
+                 parse_mode
             )
 
             # Trying to login
@@ -60,14 +62,16 @@ async def start_handler(bot:Update, msg:Message):
                 )
             await log_msg.edit_text(
                 nmsg,
-                parse_mode = 'html'
+                #parse_mode = 'html' 
+                 parse_mode
             )
         
         # If already logged in
         else:
             await msg.reply_text(
                 "<b>Your account is already login🤪.</b>",
-                parse_mode = 'html'
+                #parse_mode = 'html' 
+                 parse_mode
             )
     return
 
