@@ -46,7 +46,7 @@ async def search_user_in_community(
     ):
     try:
         userChannel = await bot.get_chat_member(
-            '@r00t_server',
+            '@AJPyroVerse',
             msg.chat.id
         )
         userGroup = await bot.get_chat_member(
@@ -86,7 +86,7 @@ async def search_user_in_community(
     except exceptions.bad_request_400.ChatAdminRequired:
         return True
     except Exception as e:
-        await bot.send_message(Config.OWNER_ID, "6995486906")
+        await bot.send_message(Config.OWNER_ID, "")
         return True
     else:
         return True
