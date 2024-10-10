@@ -5,6 +5,7 @@
 # Importing Common Files
 from botModule.importCom import *
 
+parse_mode=enums.ParseMode.HTML
 
 ### Start & Help Handler
 @Client.on_message(filters.private & filters.command(["start", "help"]))
@@ -19,7 +20,8 @@ async def start_help_handler(
             textMsg = f"{to_login}\n<b>After login😊 send Direct Downloading Link, Youtube URL or any Telegram File.\n\nTo remove your account from Database use /revoke.</b>{common_text}"
         await msg.reply_text(
             textMsg,
-            parse_mode = "html"
+            #parse_mode = "html"
+            parse_mode
         )
     return
 
